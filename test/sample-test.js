@@ -1,19 +1,21 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Greeter", function () {
+describe("ElSalvadorCoffee", function () {
   it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+    const ElSalvadorCoffee = await ethers.getContractFactory("ElSalvadorCoffee");
+    const elSalvadorCoffee = await ElSalvadorCoffee.deploy("Hello, world!");
+    await elSalvadorCoffee.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    expect(await elSalvadorCoffee.greet()).to.equal("Hello, world!");
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+    //const setGreetingTx = await elSalvadorCoffee.setGreeting("Hola, mundo!");
 
     // wait until the transaction is mined
-    await setGreetingTx.wait();
+    //await setGreetingTx.wait();
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    //expect(await elSalvadorCoffee.greet()).to.equal("Hola, mundo!");
+
+    // write assertions to test
   });
 });
