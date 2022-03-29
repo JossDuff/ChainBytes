@@ -120,7 +120,7 @@ contract ElSalvadorCoffee is Ownable {
         // payout to a boolean and requiring that it is successful.
         // TODO: might run into issues depending on gas fees.  Figure out
         // how transaction costs might effect this.
-        bool returnAmount = payable(msg.sender).send(functionBalance - totalPaid);
+        bool returnAmount = payable(msg.sender).send(functionBalance);
         require(returnAmount, "Failed to return extra funds after paying workers.");
     }
 
