@@ -14,10 +14,10 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const ElSalvadorCoffee = await hre.ethers.getContractFactory("elSalvadorCoffee");
+  const ElSalvadorCoffee = await hre.ethers.getContractFactory("ElSalvadorCoffee");
   const elSalvadorCoffee = await ElSalvadorCoffee.deploy("Hello, Hardhat!");
 
-  await elSalvadorCoffee.deployed();
+  await ElSalvadorCoffee.deployed();
 
   console.log("ElSalvadorCoffee deployed to:", elSalvadorCoffee.address);
 }

@@ -16,6 +16,28 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
+
+
 module.exports = {
-  solidity: "0.8.4",
-};
+  // defaultNetwork: "luEth",
+  networks: {
+    hardhat: {
+    },
+    // luEth: {
+    //   url: "http://vitalik.cse.lehigh.edu:8545",
+    //   accounts: [""]  // Insert private key in quotes, and uncomment this block
+    // }
+  },
+  solidity: {
+    version: "0.8.4",
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
+  },
+  mocha: {
+    timeout: 40000
+  }
+}
