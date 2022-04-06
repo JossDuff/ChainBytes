@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "./foremanFactory.sol";
+import "./farmFactory.sol";
 
-contract payment is foremanFactory {
+contract payment is farmFactory {
   
   event paidWorker(address worker);
   
@@ -20,5 +20,9 @@ contract payment is foremanFactory {
     //emit event so in the front end we can display a nice message
     //to let person know they successfully paid a worker
     emit paidWorker(worker);
+  }
+
+  function getLastWorkerBlock(address worker) external view returns (uint){
+    return workerLastBlockNumber[worker];
   }
 }
