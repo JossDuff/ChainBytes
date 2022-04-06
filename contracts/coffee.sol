@@ -82,6 +82,11 @@ contract coffee is Ownable{
         emit newFarm(_farmAddress);
     }
 
+    // Returns true if the _maybeFarm address is a farm, false otherwise.
+    function isAddressFarm(address _maybeFarm) public view returns(bool){
+        return isFarm[_maybeFarm];
+    }
+
 /*
     This block handles the mapping that associates a farm to a foreman but I'm commenting 
     it out for now because I no longer belive we need that association in contract.
@@ -127,6 +132,11 @@ contract coffee is Ownable{
         // Emits event to frontend with the farm address and the foreman address.
         // The frontend should save this association.
         emit newForeman(msg.sender, _foremanAddress);
+    }
+
+    // Returns true if address is a foreman, false otherwise.
+    function isAddressForeman(address _maybeForeman) public view returns(bool){
+        return isForeman[_maybeForeman];
     }
 
 
@@ -175,8 +185,8 @@ contract coffee is Ownable{
     // function that is only callable by the farm, and then in this function we make a call to a 
     // getDate function to return the date.
     function checkIn(address _workerAddress, string memory _date) public onlyForeman {
-        // Maybe we can handle association of worker and foreman addresses in frontend?
-        // I think this function accomplishes the goal of foremen indicating that a worker
+        // We can handle the association between the worker and foreman in the frontend.
+        // This function accomplishes the goal of foremen indicating that a worker
         // worked on a particular day as only a foreman can call this function.
         
         emit workerCheckedIn(msg.sender, _workerAddress, _date);
