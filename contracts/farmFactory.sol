@@ -21,5 +21,10 @@ contract farmFactory is Ownable {
     emit newFarm(_farmName, _region);
   }
 
+  // For tests.js
+  function getFarmName(uint _index) public view onlyOwner returns(string memory) {
+    return farms[_index].farmName;
+  }
+
   
 }

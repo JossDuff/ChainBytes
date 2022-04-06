@@ -30,9 +30,12 @@ contract foremanFactory is farmFactory {
     addressToForeman[newForemanAddress] = _newForeman;
 
   }
+
+  // For tests.js
+  function getForemanRegion(uint _index) public view onlyOwner returns(string memory){
+    return foremen[_index].region;
+  } 
   
-  // Going with approach 'a' for now from our contract map just so we have something down:
-  // https://docs.google.com/document/d/1LAGfZoLi2p2hZDc_PrnpJCeAjLyFpHN0yOR0bNA2WOE/edit
   function checkIn(address worker) external {
 
   }
