@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
     OUR GOAL: to make sure that coffee laborers in El Salvador are being paid a fare
     wage using blockchain technology.  We're using a blockchain because blockchains are 
     irrefutable.  When a transaciton is on chain, nobody can refute the transaction.  
-    So what functionality do we need to be irrefutable to accomplish our goal?  Obviously,
-    the payment of workers is one function that needs to be irrefutable.  Also, we need 
+    So what functionality do we need to be irrefutable (on chain) to accomplish our goal?  
+    The payment of workers is one function that needs to be irrefutable.  Also, we need 
     a function to indicate that a worker did indeed work each day so the public can 
     compare the amount of days they worked to the amount they were paid.  Foremen handle 
     checking in workers each day and farms handle the paying of wages to workers.  This is the
@@ -26,7 +26,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
     with a region or a name can be handled by the frontend at the time of the farm
     or foreman creation (indicated by the events that are emitted) assuming that 
     these functions are also only being called by the frontend.  Frontend should 
-    also handle querying of data because this isn't needed in this contract.
+    also handle querying of relationships because this isn't needed in our MVP.
 
     TEAM DISCUSSION QUESTION:
         Why do we need a foreman to be associated with a farm in contract?  
@@ -87,23 +87,6 @@ contract coffee is Ownable{
         return isFarm[_maybeFarm];
     }
 
-/*
-    This block handles the mapping that associates a farm to a foreman but I'm commenting 
-    it out for now because I no longer belive we need that association in contract.
-
-    struct maybeForeman {
-        address owner;
-        bool isForeman;
-    }
-
-    // Double mapping for address (farm) => address (forman) => bool (isForeman).
-    // It's really a mapping of farm addresses to the space of all addresses
-    // with a flag (bool isForeman) indicating this address is a foreman at 
-    // the farm.
-    // This way we can associate a foreman's address with a farm.
-    mapping(address => maybeForeman[]) farmForemen;
-*/
-
 
     // Mapping for verifying an address is a foreman.
     // Used in onlyForeman modifier.
@@ -112,19 +95,6 @@ contract coffee is Ownable{
     // Is to be called by a farm address to create a new foreman for that farm.
     // 'address _foremanAddress' is the address of the foreman to be added to the farm.
     function createForeman(address _foremanAddress) public onlyFarm {
-
-/*
-        This block handles the mapping that associates a farm to a foreman but I'm commenting 
-        it out for now because I no longer belive we need that association in contract.
-
-        // Creates a new maybeForeman struct with the foreman's address and sets
-        // 'isForeman' to true, indicating that this address is a foreman.
-        maybeForeman memory _newForeman = maybeForeman(_foremanAddress, true);
-
-        // Adds the new foreman address to the mapping of farm's foremen.
-        // msg.sender is the farm calling this function who wants a new foreman.
-        farmForemen[msg.sender].push(_newForeman);
-*/
 
         // Additionally sets the isForeman mapping to true.
         isForeman[_foremanAddress] = true;
@@ -156,15 +126,19 @@ contract coffee is Ownable{
     For associating workers to foremen, this can also be handled in the frontend for now because
     we have no need to get a list of all workers for a foreman yet in this contract.  When the
     event workerCheckedIn(address foreman, address worker, string date) is called, the frontend
-    can add the worker to an array of addresses for a worker.
+    can add the worker to an array of addresses for a worker.  If someone wanted to verify this,
+    they could pull up a list of all the events emitted by the checkIn function, which logs the 
+    foreman's address who is calling checkIn, the workers address, and the date.
 
 */
 
 
-    // The frontend will call this function with the address of each worker
+    // The farm will call this function with the address of each worker
     // to pay and also the amount of days to pay them for.
     // Amount of days to pay them for is calculated in frontend.
     // Update the dates that the worker was paid for in the frontend.
+    // Again, can be independently verified by anyone viewing the history
+    // of the emitted events.
     function payWorker(address _worker) public payable onlyFarm {
         // Pays the worker and requires that it was successful,
         // otherwise it failed and the payment doesn't go through
@@ -177,16 +151,16 @@ contract coffee is Ownable{
 
 
     // Foreman calls checkIn with the worker address and the date.  The date is determined by the frontend.
-    // Sends the date to frontend, so the frontend can handle sorting which days the worker worked for,
+    // Emits the workerCheckedIn event so the frontend can handle sorting which days the worker worked for,
     // and which days the worker is unpaid for.
     // TODO: what if a foreman forgets to check in workers on a certain date and they want to go back and
     // check them in later?
     // TODO: if the foreman can't be trusted with setting the proper date, then we can have a setDate
-    // function that is only callable by the farm, and then in this function we make a call to a 
+    // function that is only callable by the farm, and then in checkIn function we make a call to a 
     // getDate function to return the date.
     function checkIn(address _workerAddress, string memory _date) public onlyForeman {
         // We can handle the association between the worker and foreman in the frontend.
-        // This function accomplishes the goal of foremen indicating that a worker
+        // This function accomplishes the goal of foremen indicating irrefutably that a worker
         // worked on a particular day as only a foreman can call this function.
         
         emit workerCheckedIn(msg.sender, _workerAddress, _date);
