@@ -7,3 +7,12 @@ typechain
 #Hardhat files
 cache
 artifacts
+
+#Package jsons
+package-lock.json
+package.json
+
+#Compiled files
+bin/contracts/*
+
+.DS_Store
