@@ -6,23 +6,13 @@ import "./farmFactory.sol";
 contract payment is farmFactory {
   
   event paidWorker(address worker);
-  
-  // Maps the worker's address to the block number that they were last paid at
-  mapping (address => uint) internal workerLastBlockNumber;
 
   function payWorker(address worker) external payable{
-    //joss inspired, bind payment to boolean send
     bool sent = payable(worker).send(msg.value);
     //require sent is true
-    require(sent, "Worker payment failed");
-    //update workerLastBlockNumber
-    workerLastBlockNumber[worker] = block.number;
-    //emit event so in the front end we can display a nice message
-    //to let person know they successfully paid a worker
-    emit paidWorker(worker);
-  }
 
-  function getLastWorkerBlock(address worker) external view returns (uint){
-    return workerLastBlockNumber[worker];
+    require(sent, "Worker payment failed");
+
+    emit paidWorker(worker);
   }
 }
