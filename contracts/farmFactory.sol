@@ -2,9 +2,10 @@
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract farmFactory is Ownable {
-  event newFarm(string name, string region, address[] foremen);
+  event newFarm(string name, string region);
   event newForeman(uint workerId);
 
   // The farm struct will hold the details to distinguish one farm from another
@@ -12,67 +13,56 @@ contract farmFactory is Ownable {
     string farmName;
     string region;
     //array to hold all of the foreman contracts controlled by this farm
-    address[] formen;
   }
 
+  foremanRole[] public foremen;
   Farm[] public farms;
+
   //mapping to keep track of who owns what farm
-  mapping (uint => address) farmToOwner;
+  mapping (uint=>address) farmToOwner;
+  mapping (uint=>address) foremanToOwner;
+
   // Allow the creation of a new worker when they first connect to the DApp
-  function createFarm(string memory _farmName, string memory _region, address[] memory _foreman) external onlyOwner {
-    farms.push(Farm(_farmName, _region, _foreman));
+  function createFarm(string memory _farmName, string memory _region) external onlyOwner {
+    farms.push(Farm(_farmName, _region));
     uint id = farms.length - 1;
     farmToOwner[id] = msg.sender;
-    emit newFarm(_farmName, _region, _foreman);
+    emit newFarm(_farmName, _region);
   }
+
   //function to create new foreman
   //need the address of the new foreman and region
-  function createForemanContract(string memory region, address foremanAddress) public {
-    foreman fm = new foreman();
-    fm.createForeman(region, foremanAddress);
-    //now we have to get the correct farm who is owned by msg.sender to add this foreman to it
-    uint size = farms.length;
-    for (uint i = 0; i < size; i++){
-      if (farmToOwner[i] == msg.sender){
-        //now the correct farm keeps track of this foreman
-        (farms[i].formen).push(address(fm));
-      }
-    }
+  function createForemanContract(string memory region, address foremanAddress) public onlyOwner {
+    // Add the new foreman onto the array of foremen
+    foremen.push(new foremanRole(region));
+    uint id = foremen.length - 1;
+
+    // Map the foreman's ID with the address of the foreman
+    foremanToOwner[id] = foremanAddress;
+
   }
 }
 
-contract foreman {
-
-  struct Foreman {
-    string region;
-    uint numTimesCheckedIn;
-  }
+contract foremanRole {
   
-  Foreman[] public foremen;
-
-  // Returns the Foreman given the address.
-  // Set an address to a foreman: addressToForeman[bobAddress] = bobForeman;
-  // Get a foreman from address: Foreman bobForeman = addressToForeman[bobAdress];
-  // Only need to use this in a situation where we would normally 
-  // search through the whole workers array for a specific foreman 
-  // based on their address.
-  mapping (address=>Foreman) internal addressToForeman;
-
-  function createForeman(string memory _region, address newForemanAddress) external  {
-    Foreman memory _newForeman = Foreman(_region, 0);
-    foremen.push(_newForeman);
-
-    // Ties the foreman to an address by adding it to the mapping.
-    // This way we can be given just an address and return it's foreman object.
-    // ex: Foreman bobForeman = addressToForeman[bobsAdress];
-    addressToForeman[newForemanAddress] = _newForeman;
-
+  string region;
+  // Constructor to set the region that THIS foreman is working at
+  constructor(string memory _region) {
+    region = _region;
   }
+
+  // Keep track of checkin times for workers that have checked in under this foreman
+  // Checkin times will be in the format: 'Time(UTC) \n'
+  // NB: Worker can figure out times that they worked based on looking through all foremen and checking if their
+  // address pops up for valid checkInTimes
+  mapping (address=>string) checkInTime;
   
   // Going with approach 'a' for now from our contract map just so we have something down:
   // https://docs.google.com/document/d/1LAGfZoLi2p2hZDc_PrnpJCeAjLyFpHN0yOR0bNA2WOE/edit
-  function checkIn(address worker) external {
-
+  // NB: Need to add a check that a user wasn't checked in so close to a previous check in time
+  function checkIn(address _worker) external {
+    string memory currentTime = checkInTime[_worker];
+    currentTime = string(abi.encodePacked(currentTime, Strings.toString(block.timestamp), "\n"));
+    checkInTime[_worker] = currentTime;
   }
-
-  }
+}
