@@ -21,7 +21,6 @@ contract farmFactory is Ownable {
   //mapping to keep track of who owns what farm
   mapping (uint=>address) farmToOwner;
   mapping (uint=>address) foremanToOwner;
-
   // Allow the creation of a new worker when they first connect to the DApp
   function createFarm(string memory _farmName, string memory _region) external onlyOwner {
     farms.push(Farm(_farmName, _region));
@@ -55,15 +54,17 @@ contract foremanRole {
   // Checkin times will be in the format: 'Time(UTC) \n'
   // NB: Worker can figure out times that they worked based on looking through all foremen and checking if their
   // address pops up for valid checkInTimes
-  mapping (address=>string) checkInTime;
-  mapping (address=> uint) lastPaidTime;
+  mapping (address=>string[])  workHistory;
+  mapping (address=>string[])  unpaidWorkDays;
   
   // Going with approach 'a' for now from our contract map just so we have something down:
   // https://docs.google.com/document/d/1LAGfZoLi2p2hZDc_PrnpJCeAjLyFpHN0yOR0bNA2WOE/edit
   // NB: Need to add a check that a user wasn't checked in so close to a previous check in time
-  function checkIn(address _worker) external {
-    string memory currentTime = checkInTime[_worker];
-    currentTime = string(abi.encodePacked(currentTime, Strings.toString(block.timestamp), "\n"));
-    checkInTime[_worker] = currentTime;
+  function checkIn(address _worker) external returns (string memory today) {
+    //adding an additonal element to the array mapped to _worker
+    //this current block.timestamp
+    today = string(abi.encodePacked((Strings.toString(block.timestamp))));
+    unpaidWorkDays[_worker].push(today);
+    return today;
   }
 }
