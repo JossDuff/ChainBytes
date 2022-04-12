@@ -56,6 +56,7 @@ contract foremanRole {
   // NB: Worker can figure out times that they worked based on looking through all foremen and checking if their
   // address pops up for valid checkInTimes
   mapping (address=>string) checkInTime;
+  mapping (address=> uint) lastPaidTime;
   
   // Going with approach 'a' for now from our contract map just so we have something down:
   // https://docs.google.com/document/d/1LAGfZoLi2p2hZDc_PrnpJCeAjLyFpHN0yOR0bNA2WOE/edit
