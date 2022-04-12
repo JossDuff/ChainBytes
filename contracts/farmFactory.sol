@@ -67,4 +67,29 @@ contract foremanRole {
     unpaidWorkDays[_worker].push(today);
     return today;
   }
+  
+  // Function to access mapping from external contract
+  function getUnpaidWorkDays(address _worker) external view returns (string[] memory) {
+    return unpaidWorkDays[_worker];
+  }
+
+  // Function to access mapping from external contract and push a new work day
+  function addUnpaidWorkDay(address _worker, string memory newWorkDay) external {
+    unpaidWorkDays[_worker].push(newWorkDay);
+  }
+
+  // Function to clear unpaidWorkDays
+  function clearUnpaidWorkDays(address _worker) external {
+    unpaidWorkDays[_worker] = new string[](0);
+  }
+
+  // Function to access mapping from external contract
+  function getWorkHistory(address _worker) external view returns (string[] memory) {
+    return workHistory[_worker];
+  }
+
+  // Function to access mapping from external contract and push a new work day
+  function setWorkHistory(address _worker, string memory newWorkDay) external {
+    workHistory[_worker].push(newWorkDay);
+  }
 }
