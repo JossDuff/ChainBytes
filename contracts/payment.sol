@@ -18,15 +18,26 @@ contract payment is  farmFactory{
 
   // pay a worker a specfic, explicit value
   function payWorkerSpecific(address worker) external payable{
+    //pay the worker with the value of the transaction
     bool sent = payable(worker).send(msg.value);
     require(sent, "Worker payment failed");
+    //now that we know the payment went through,
+    // we can itterate through the array of foreman and check to see if they have unpaid work days outstanding
+    //if they do, we will call the function adjustWorkerHistory which transfers unpaid work days to work history and clears unpaid days
+    foremanGateway thisForeman;
+    for (uint i = 0; i < foremen.length; i++){
+      foremanRole fr = foremen[i];
+      thisForeman = foremanGateway(address(fr));
+      if (thisForeman.getUnpaidWorkDays(worker).length > 0) {
+        adjustWorkerHistory(fr, worker);
+      }
+    }
     //now we will take care of the arrays
 
     emit paidWorker(worker);
   }
 
   // Count up how many times this worker has checked in without getting paid
-  // Pay worker for the time that they worked, and update lastDatePaid
   function queryWorkerDaysUnpaid(address _worker) external view returns (uint){
     uint daysUnpaid;
     foremanGateway thisForeman;
