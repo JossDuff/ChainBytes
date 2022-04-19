@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
+// SPDX-License-Identifier: MIT
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -133,6 +133,9 @@ contract coffee is Ownable{
 */
 
 
+    // Mapping for keeping track of the dates that a worker has checked in
+    mapping(address => string[]) daysCheckedIn;
+
     // The farm will call this function with the address of each worker
     // to pay and also the amount of days to pay them for.
     // Amount of days to pay them for is calculated in frontend.
@@ -163,7 +166,15 @@ contract coffee is Ownable{
         // This function accomplishes the goal of foremen indicating irrefutably that a worker
         // worked on a particular day as only a foreman can call this function.
         
+        // Adds the date argument to the string array at the worker's address
+        daysCheckedIn[_workerAddress].push(_date);
+
         emit workerCheckedIn(msg.sender, _workerAddress, _date);
+    }
+
+    // Getter function to return the string array in the daysCheckedIn mapping
+    function getDaysCheckedIn(address _workerAddress) public view returns(string[] memory){
+        return daysCheckedIn[_workerAddress];
     }
     
 }
