@@ -50,7 +50,7 @@ contract coffee is Ownable{
     // the caller won't be able to use the function with this 'onlyFarm'
     // modifier attatched.
     modifier onlyFarm {
-        require(isFarm[msg.sender]);
+        require(isFarm[msg.sender], "access denied");
         _;
     }
 
@@ -61,7 +61,7 @@ contract coffee is Ownable{
     // the caller won't be able to use the function with this 'onlyForeman'
     // modifier attatched.   
     modifier onlyForeman {
-        require(isForeman[msg.sender]);
+        require(isForeman[msg.sender], "access denied");
         _;
     }
 

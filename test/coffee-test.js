@@ -1,4 +1,4 @@
-const { expect } = require("chai");
+const { expect, use } = require("chai");
 const { ethers } = require("hardhat");
 const {
   isCallTrace,
@@ -62,6 +62,45 @@ describe("coffee contract", function () {
       )
         .to.emit(hardhatCoffee, "workerCheckedIn")
         .withArgs(addr2.address, addr3.address, "August 24th, 2000");
+    });
+  });
+  describe("Foreman attempts to create farm", function () {
+    it("Should fail", async function () {
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+      //have the farm set addr2 to a foreman
+      await hardhatCoffee.connect(addr1).createForeman(addr2.address);
+      //now have the foreman try to create a farm
+      await expect(hardhatCoffee.connect(addr2).createFarm(addr2.address)).to.be
+        .reverted;
+    });
+  });
+
+  describe("Non-owner tries to pay worker", function () {
+    it("Should fail", async function () {
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+      //have the farm set addr2 to a foreman
+      await hardhatCoffee.connect(addr1).createForeman(addr2.address);
+      //now have the foreman try to create a farm
+      await expect(hardhatCoffee.connect(addr2).payWorker(addr3.address)).to.be
+        .reverted;
+    });
+  });
+
+  describe("farm tries to pay worker", function () {
+    it("Should pass and emit proper event", async function () {
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+
+      //now have the foreman try to create a farm
+      await expect(
+        hardhatCoffee.connect(addr1).payWorker(addr3.address, {
+          value: ethers.utils.parseEther("1.0"),
+        })
+      )
+        .to.emit(hardhatCoffee, "workerPaid")
+        .withArgs(addr1.address, addr3.address, ethers.utils.parseEther("1.0"));
     });
   });
 });
