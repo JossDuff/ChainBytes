@@ -103,4 +103,30 @@ describe("coffee contract", function () {
         .withArgs(addr1.address, addr3.address, ethers.utils.parseEther("1.0"));
     });
   });
+
+  describe("isForeman call after initializing a foreman", function () {
+    it("Should return true", async function () {
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+      //have the farm set addr2 to a foreman
+      await hardhatCoffee.connect(addr1).createForeman(addr2.address);
+      //now we will call isForeman and pass it the address of the newly created foreman
+      //we will expect this to return true
+      const res = await hardhatCoffee
+        .connect(addr1)
+        .isAddressForeman(addr2.address);
+      await expect(res).to.be.true;
+    });
+  });
+
+  describe("isFarm call after initializing a farm", function () {
+    it("Should return true", async function () {
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+      //call isAddressFarm from owner address and pass it addr1
+      //should be true
+      const res = await hardhatCoffee.isAddressFarm(addr1.address);
+      await expect(res).to.be.true;
+    });
+  });
 });
