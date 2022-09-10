@@ -139,7 +139,7 @@ contract coffee is Ownable{
             // otherwise it failed and the payment doesn't go through
             success = payable(_workers[i]).send(_amounts[i]);
             // TODO: does this revert the whole payWorker batch if just one transfer fails?
-            require(success, "Worker payment failed");
+            require(success, "Worker payment failed.  Invalid address or not enough currency sent.");
             emit workerPaid(msg.sender, _workers[i], _amounts[i], _date);
         }
 
