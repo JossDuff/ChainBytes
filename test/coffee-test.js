@@ -129,4 +129,10 @@ describe("coffee contract", function () {
       await expect(res).to.be.true;
     });
   });
+
+  // Negative tests to write for paying workers:
+  // farm sends not enough currency
+  // farm sends too much currency
+  // farm tries to pay an invalid address
+
 });
