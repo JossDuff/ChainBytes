@@ -70,7 +70,7 @@ contract coffee is Ownable{
     // TODO: Who should be owner?  We need a function to transfer ownership of the contract.
     //       If we go the route of anyone creating a farm, the "check-in" and "pay" functions
     //       will be basically callable by anyone, and we will have to implement more security.
-    function createFarm(address _farmAddress) public onlyOwner {
+    function createFarm(address _farmAddress) external onlyOwner {
         // Adds the _farmAddress to the mapping and sets boolean as true,
         // indicating that this address is a farm.
         isFarm[_farmAddress] = true;
@@ -84,7 +84,7 @@ contract coffee is Ownable{
 
     // Is to be called by a farm address to create a new foreman for that farm.
     // 'address _foremanAddress' is the address of the foreman to be added to the farm.
-    function createForeman(address _foremanAddress) public onlyFarm {
+    function createForeman(address _foremanAddress) external onlyFarm {
 
         // Additionally sets the isForeman mapping to true.
         isForeman[_foremanAddress] = true;
@@ -118,10 +118,10 @@ contract coffee is Ownable{
     /// @param _date is the date of this function call.
     // TODO: do we need to pass in a 'totalAmount' variable or should we calculate it here?
     function payWorkers(
-        address[] memory _workers, 
-        uint[] memory _amounts, 
-        string memory _date)
-    public payable onlyFarm {
+        address[] calldata _workers, 
+        uint[] calldata _amounts, 
+        string calldata _date)
+    external payable onlyFarm {
 
         // Since the _workers and _amounts length are essentially a mapping,
         // they should be the same length
@@ -151,7 +151,7 @@ contract coffee is Ownable{
     // Foreman calls checkIn with the worker address and the date.  The date is determined by the frontend.
     // Emits the workerCheckedIn event so the frontend can handle sorting which days the worker worked for,
     // and which days the worker is unpaid for.
-    function checkIn(address _workerAddress, string memory _date) public onlyForeman {
+    function checkIn(address _workerAddress, string calldata _date) external onlyForeman {
         // We can handle the association between the worker and foreman in the subgraph.
         // This function accomplishes the goal of foremen indicating irrefutably that a worker
         // worked on a particular day as only a foreman can call this function.
