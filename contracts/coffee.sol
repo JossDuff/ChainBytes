@@ -112,20 +112,41 @@ contract coffee is Ownable{
     they could simple query our subgraph for all workers associated with a foreman.
 */
 
-    // The farm will call this function with the address of each worker
-    // to pay and also the amount of days to pay them for.
-    // _date is the date this function is getting called.
-    // Update the dates that the worker was paid for in our subgraph.
-    function payWorker(address _worker, string memory _date) public payable onlyFarm {
-        // Pays the worker and requires that it was successful,
-        // otherwise it failed and the payment doesn't go through
-        bool success = payable(_worker).send(msg.value);
-        require(success, "Worker payment failed");
+    /// @param _workers is an array of the worker addresses to be paid
+    /// @param _amounts is the array of amounts to pay to each worker.  Maps 1-to-1 to the _workers array.
+    ///        _workers[i] gets paid _amounts[i] currency.
+    /// @param _date is the date of this function call.
+    // TODO: do we need to pass in a 'totalAmount' variable or should we calculate it here?
+    function payWorkers(
+        address[] memory _workers, 
+        uint[] memory _amounts, 
+        string memory _date)
+    public payable onlyFarm {
 
-        // msg.sender is the farm paying the worker
-        emit workerPaid(msg.sender, _worker, msg.value, _date);
+        // Since the _workers and _amounts length are essentially a mapping,
+        // they should be the same length
+        require(_workers.length == _amounts.length,
+            "_workers and _amounts arrays should be the same length."
+        );
+
+        // Declare varaible outside for-loop so we don't have to 
+        // re-allocate the variable every loop.
+        bool success;
+
+        // Iterate through the array and pay all workers
+        for(uint i=0; i < _workers.length; i++){
+            // Pays the worker and requires that it was successful,
+            // otherwise it failed and the payment doesn't go through
+            success = payable(_workers[i]).send(_amounts[i]);
+            // TODO: does this revert the whole payWorker batch if just one transfer fails?
+            require(success, "Worker payment failed");
+            emit workerPaid(msg.sender, _workers[i], _amounts[i], _date);
+        }
+
+        // send back any extra currency after all workers are paid
+        bool sentBack = payable(msg.sender).send(address(this).balance);
+        require(sentBack, "Failed to send back extra currency.");
     }
-
 
     // Foreman calls checkIn with the worker address and the date.  The date is determined by the frontend.
     // Emits the workerCheckedIn event so the frontend can handle sorting which days the worker worked for,
