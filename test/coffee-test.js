@@ -27,7 +27,7 @@ describe("coffee contract", function () {
   describe("Farm creation", function () {
     it("Should assign an address as a farm", async function () {
       await hardhatCoffee.createFarm(addr1.address);
-      const isFarm = await hardhatCoffee.isAddressFarm(addr1.address);
+      const isFarm = await hardhatCoffee.isFarm(addr1.address);
 
       expect(isFarm).to.equal(true);
     });
@@ -41,7 +41,7 @@ describe("coffee contract", function () {
       // The farm (addr1) sets addr2 as a foreman
       await hardhatCoffee.connect(addr1).createForeman(addr2.address);
 
-      const isForeman = await hardhatCoffee.isAddressForeman(addr2.address);
+      const isForeman = await hardhatCoffee.isForeman[addr2.address];
       expect(isForeman).to.equal(true);
     });
   });
@@ -131,8 +131,8 @@ describe("coffee contract", function () {
   });
 
   // Negative tests to write for paying workers:
-  // farm sends not enough currency
-  // farm sends too much currency
-  // farm tries to pay an invalid address
+  // farm sends not enough currency (transactions paying all workers should revert)
+  // farm sends too much currency (farm should be sent back the extra currency)
+  // farm tries to pay an invalid address (transactions paying all workers should revert)
 
 });
