@@ -88,19 +88,24 @@ describe("coffee contract", function () {
     });
   });
 
-  describe("farm tries to pay worker", function () {
-    it("Should pass and emit proper event", async function () {
+  describe("farm tries to pay workers", function () {
+    it("Should pass and emit proper events", async function () {
+      //build args for payWorkers
+      let workers = [addr2.address, addr3.address];
+      let amounts = [2, 4];
+      let date = "09/12/2022";
       //set addr1 as a farm
       await hardhatCoffee.createFarm(addr1.address);
 
-      //now have the foreman try to create a farm
       await expect(
-        hardhatCoffee.connect(addr1).payWorker(addr3.address, {
-          value: ethers.utils.parseEther("1.0"),
+        hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+          value: ethers.utils.parseEther("6.0"),
         })
       )
         .to.emit(hardhatCoffee, "workerPaid")
-        .withArgs(addr1.address, addr3.address, ethers.utils.parseEther("1.0"));
+        .withArgs(addr1.address, addr2.address, amounts[0], date)
+        .and.to.emit(hardhatCoffee, "workerPaid")
+        .withArgs(addr1.address, addr3.address, amounts[1], date);
     });
   });
 
@@ -134,5 +139,4 @@ describe("coffee contract", function () {
   // farm sends not enough currency (transactions paying all workers should revert)
   // farm sends too much currency (farm should be sent back the extra currency)
   // farm tries to pay an invalid address (transactions paying all workers should revert)
-
 });
