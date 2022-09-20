@@ -55,10 +55,12 @@ describe("coffee contract", function () {
       //now lets check in with addr3 as worker
       await hardhatCoffee
         .connect(addr2)
-        .checkIn(addr3.address, "August 24th, 2000");
+        .checkIn([addr3.address], "August 24th, 2000");
       //now we should expect the correct event to fire
       await expect(
-        hardhatCoffee.connect(addr2).checkIn([addr3.address], "August 24th, 2000")
+        hardhatCoffee
+          .connect(addr2)
+          .checkIn([addr3.address], "August 24th, 2000")
       )
         .to.emit(hardhatCoffee, "workerCheckedIn")
         .withArgs(addr2.address, addr3.address, "August 24th, 2000");
@@ -144,9 +146,11 @@ describe("coffee contract", function () {
       //set addr1 as a farm
       await hardhatCoffee.createFarm(addr1.address);
 
-      await expect(hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
-        value: ethers.utils.parseEther("8.0"),
-      })).to.be.reverted;
+      await expect(
+        hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+          value: ethers.utils.parseEther("8.0"),
+        })
+      ).to.be.reverted;
     });
   });
 
