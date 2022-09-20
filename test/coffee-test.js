@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 const {
   isCallTrace,
 } = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
-
+const provider = ethers.getDefaultProvider();
 describe("coffee contract", function () {
   let owner;
   let addr1;
@@ -41,7 +41,7 @@ describe("coffee contract", function () {
       // The farm (addr1) sets addr2 as a foreman
       await hardhatCoffee.connect(addr1).createForeman(addr2.address);
 
-      const isForeman = await hardhatCoffee.isForeman[addr2.address];
+      const isForeman = await hardhatCoffee.isForeman(addr2.address);
       expect(isForeman).to.equal(true);
     });
   });
@@ -78,18 +78,24 @@ describe("coffee contract", function () {
 
   describe("Non-owner tries to pay worker", function () {
     it("Should fail", async function () {
+      let workers = [addr3.address];
+      let amounts = [4];
+      let date = "09/18/2022";
       //set addr1 as a farm
       await hardhatCoffee.createFarm(addr1.address);
       //have the farm set addr2 to a foreman
       await hardhatCoffee.connect(addr1).createForeman(addr2.address);
       //now have the foreman try to create a farm
-      await expect(hardhatCoffee.connect(addr2).payWorker(addr3.address)).to.be
-        .reverted;
+      await expect(
+        hardhatCoffee.connect(addr2).payWorkers(workers, amounts, date, {
+          value: ethers.utils.parseEther("4.0"),
+        })
+      ).to.be.reverted;
     });
   });
 
   describe("farm tries to pay workers", function () {
-    it("Should pass and emit proper events", async function () {
+    it("Should pass and emit proper events and correctly update account balances", async function () {
       //build args for payWorkers
       let workers = [addr2.address, addr3.address];
       let amounts = [2, 4];
@@ -109,34 +115,46 @@ describe("coffee contract", function () {
     });
   });
 
-  describe("isForeman call after initializing a foreman", function () {
-    it("Should return true", async function () {
-      //set addr1 as a farm
-      await hardhatCoffee.createFarm(addr1.address);
-      //have the farm set addr2 to a foreman
-      await hardhatCoffee.connect(addr1).createForeman(addr2.address);
-      //now we will call isForeman and pass it the address of the newly created foreman
-      //we will expect this to return true
-      const res = await hardhatCoffee
-        .connect(addr1)
-        .isAddressForeman(addr2.address);
-      await expect(res).to.be.true;
-    });
-  });
-
-  describe("isFarm call after initializing a farm", function () {
-    it("Should return true", async function () {
-      //set addr1 as a farm
-      await hardhatCoffee.createFarm(addr1.address);
-      //call isAddressFarm from owner address and pass it addr1
-      //should be true
-      const res = await hardhatCoffee.isAddressFarm(addr1.address);
-      await expect(res).to.be.true;
-    });
-  });
-
   // Negative tests to write for paying workers:
-  // farm sends not enough currency (transactions paying all workers should revert)
+  // farm sends not enough currency (transactions paying all workers should revert
+  // currently failing as of 09/18/22, need to rework batch payment function
+  describe("farm tries to pay workers with not enough money", function () {
+    it("Should revert with the proper error message", async function () {
+      //build args for payWorkers
+      let workers = [addr2.address, addr3.address];
+      let amounts = [2, 4];
+      let date = "09/12/2022";
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+
+      await expect(
+        hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+          value: ethers.utils.parseEther("3.0"),
+        })
+      ).to.be.reverted;
+    });
+  });
+
   // farm sends too much currency (farm should be sent back the extra currency)
+  // failing
+  describe("farm pays too much money to workers", function () {
+    it("Should pass and emit proper events and correctly return extra funds to the sender", async function () {
+      //build args for payWorkers
+      let workers = [addr2.address, addr3.address];
+      let amounts = [2, 4];
+      let date = "09/12/2022";
+      //set addr1 as a farm
+      await hardhatCoffee.createFarm(addr1.address);
+
+      await hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+        value: ethers.utils.parseEther("8.0"),
+      });
+      let balance = await provider.getBalance(addr1.address);
+      const balanceInEth = await ethers.utils.formatEther(balance);
+      console.log(balanceInEth);
+      expect(balanceInEth).to.equal(2);
+    });
+  });
+
   // farm tries to pay an invalid address (transactions paying all workers should revert)
 });
