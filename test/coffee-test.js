@@ -58,7 +58,7 @@ describe("coffee contract", function () {
         .checkIn(addr3.address, "August 24th, 2000");
       //now we should expect the correct event to fire
       await expect(
-        hardhatCoffee.connect(addr2).checkIn(addr3.address, "August 24th, 2000")
+        hardhatCoffee.connect(addr2).checkIn([addr3.address], "August 24th, 2000")
       )
         .to.emit(hardhatCoffee, "workerCheckedIn")
         .withArgs(addr2.address, addr3.address, "August 24th, 2000");
@@ -116,8 +116,7 @@ describe("coffee contract", function () {
   });
 
   // Negative tests to write for paying workers:
-  // farm sends not enough currency (transactions paying all workers should revert
-  // currently failing as of 09/18/22, need to rework batch payment function
+  // farm sends not enough currency (transactions paying all workers should revert)
   describe("farm tries to pay workers with not enough money", function () {
     it("Should revert with the proper error message", async function () {
       //build args for payWorkers
@@ -135,8 +134,7 @@ describe("coffee contract", function () {
     });
   });
 
-  // farm sends too much currency (farm should be sent back the extra currency)
-  // failing
+  // farm sends too much currency (should revert)
   describe("farm pays too much money to workers", function () {
     it("Should pass and emit proper events and correctly return extra funds to the sender", async function () {
       //build args for payWorkers
@@ -146,13 +144,9 @@ describe("coffee contract", function () {
       //set addr1 as a farm
       await hardhatCoffee.createFarm(addr1.address);
 
-      await hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+      await expect(hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
         value: ethers.utils.parseEther("8.0"),
-      });
-      let balance = await provider.getBalance(addr1.address);
-      const balanceInEth = await ethers.utils.formatEther(balance);
-      console.log(balanceInEth);
-      expect(balanceInEth).to.equal(2);
+      })).to.be.reverted;
     });
   });
 

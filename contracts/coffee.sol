@@ -3,7 +3,6 @@ pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-
 /** 
     @title: Verifying Fair Wages for Coffee Laborers in El Salvador
     @author: Lehigh University Chainbytes capstone project team
@@ -36,6 +35,7 @@ contract coffee is Ownable{
     error AddressNotFarm();
     error AddressNotForeman();
     error WorkersAmountsMismatch();
+    error WrongPaymentAmount();
     error PaymentFailed();
     error SendBackFailed();
 
@@ -160,6 +160,17 @@ contract coffee is Ownable{
             revert WorkersAmountsMismatch();
         }
 
+        // calculates the sum of the amounts array
+        uint sumAmounts;
+        for(uint i=0; i < _amounts.length; i++){
+            sumAmounts += _amounts[i];
+        }
+
+        // requires the sum of the amounts array to be equal to
+        if(!(sumAmounts*1e18 == msg.value)){
+            revert WrongPaymentAmount();
+        }
+
         // Declare varaible outside loop so we don't have to 
         // re-allocate the variable every loop.
         bool success;
@@ -169,18 +180,12 @@ contract coffee is Ownable{
 
             // Pays the worker and requires that it was successful,
             // otherwise it failed and the payment doesn't go through
-            success = payable(_workers[i]).send(_amounts[i]);
+            success = payable(_workers[i]).send(_amounts[i]*1e18);
             
             if(!success){
                 revert PaymentFailed();
             }
             emit workerPaid(msg.sender, _workers[i], _amounts[i], _date);
-        }
-
-        // send back any extra currency after all workers are paid
-        bool sentBack = payable(msg.sender).send(address(this).balance);
-        if(!sentBack){
-            revert SendBackFailed();
         }
     }
 
