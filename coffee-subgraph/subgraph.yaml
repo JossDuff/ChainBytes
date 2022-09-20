@@ -1,0 +1,35 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: coffee
+    network: rinkeby
+    source:
+      address: "0x9EbbB0D9c378bf5E6B9c334a5948De49EE4F61Af"
+      abi: coffee
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - OwnershipTransferred
+        - newFarm
+        - newForeman
+        - workerCheckedIn
+        - workerPaid
+      abis:
+        - name: coffee
+          file: ./abis/coffee.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: newFarm(address)
+          handler: handlenewFarm
+        - event: newForeman(address,address)
+          handler: handlenewForeman
+        - event: workerCheckedIn(address,address,string)
+          handler: handleworkerCheckedIn
+        - event: workerPaid(address,address,uint256,string)
+          handler: handleworkerPaid
+      file: ./src/coffee.ts
