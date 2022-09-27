@@ -20,18 +20,9 @@ export function handlenewFarm(event: newFarm): void {
 }
 
 export function handlenewForeman(event: newForeman): void {
-  let farm = Farm.load(event.params.farmAddress);
-
-  // A foreman cannot exist without a farm because coffee.sol
-  // createForeman() function is only callable by a farm, but
-  // the subgraph doesn't know that so we have to have this check.
-  if(!farm) {
-    farm = new Farm(event.params.farmAddress);
-  }
-
   let newForeman = new Foreman(event.params.foreman);
-  newForeman.hasFarm = farm.id;
-
+  // sets to the farm who created the foreman
+  newForeman.hasFarm = event.transaction.from;
   newForeman.save();
 }
 
@@ -52,8 +43,10 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
     worker.daysUnpaid = 1;
   }
   else {
-    // if the worker exists, increment days worked by 1
+    // if the worker exists, increment days worked 
+    // and days unpaid by 1.
     worker.daysWorked += 1;
+    worker.daysUnpaid += 1;
   }
 
   worker.save();
@@ -69,10 +62,12 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
   if(!foreman) {
     foreman = new Foreman(event.params.foreman);
   }
-  // add the worker to the array of workers in the foreman's 
-  // hasWorkers field.
+  // If the array of associated workers for a foreman doesn't
+  // already include this worker, add this worker to the array.
   // '?' means possibly null
-  foreman.hasWorkers?.push(worker.id);
+  if(!foreman.hasWorkers?.includes(worker.id)){
+    foreman.hasWorkers?.push(worker.id);
+  }
   foreman.save();
 
 
