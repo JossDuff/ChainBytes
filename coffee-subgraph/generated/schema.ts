@@ -152,15 +152,6 @@ export class Farm extends Entity {
     this.set("name", Value.fromString(value));
   }
 
-  get farmCreatedBy(): Bytes {
-    let value = this.get("farmCreatedBy");
-    return value!.toBytes();
-  }
-
-  set farmCreatedBy(value: Bytes) {
-    this.set("farmCreatedBy", Value.fromBytes(value));
-  }
-
   get farmCheckIns(): Array<Bytes> | null {
     let value = this.get("farmCheckIns");
     if (!value || value.kind == ValueKind.NULL) {
@@ -209,55 +200,6 @@ export class Farm extends Entity {
       this.unset("madePayments");
     } else {
       this.set("madePayments", Value.fromBytesArray(<Array<Bytes>>value));
-    }
-  }
-}
-
-export class Owner extends Entity {
-  constructor(id: Bytes) {
-    super();
-    this.set("id", Value.fromBytes(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Owner entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type Owner must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("Owner", id.toBytes().toHexString(), this);
-    }
-  }
-
-  static load(id: Bytes): Owner | null {
-    return changetype<Owner | null>(store.get("Owner", id.toHexString()));
-  }
-
-  get id(): Bytes {
-    let value = this.get("id");
-    return value!.toBytes();
-  }
-
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
-  }
-
-  get createdFarms(): Array<Bytes> | null {
-    let value = this.get("createdFarms");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
-  }
-
-  set createdFarms(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("createdFarms");
-    } else {
-      this.set("createdFarms", Value.fromBytesArray(<Array<Bytes>>value));
     }
   }
 }
@@ -368,13 +310,22 @@ export class Payment extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
-  get amount(): i32 {
+  get amount(): BigInt {
     let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get daysPaidFor(): i32 {
+    let value = this.get("daysPaidFor");
     return value!.toI32();
   }
 
-  set amount(value: i32) {
-    this.set("amount", Value.fromI32(value));
+  set daysPaidFor(value: i32) {
+    this.set("daysPaidFor", Value.fromI32(value));
   }
 
   get farmWhoPaid(): Bytes {

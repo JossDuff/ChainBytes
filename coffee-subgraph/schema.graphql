@@ -44,24 +44,12 @@ type Farm @entity {
   # address
   id: Bytes!
   name: String!
-  # A Farm is created by the Owner
-  farmCreatedBy: Owner!
   # Farm is assocated with many CheckIn events
   farmCheckIns: [CheckIn!] @derivedFrom(field: "farmCheckedInAt")
   # Farm has many Foremen
   hasForemen: [Foreman!] @derivedFrom(field: "hasFarm")
   # Farm makes many payments
   madePayments: [Payment!] @derivedFrom(field: "farmWhoPaid")
-}
-
-# The owner of the contract.
-# At time of contract creation, OwnershipTransferred(oldOwner, newOwner) is emitted.
-# There is only 1 active owner at a time.
-type Owner @entity {
-  # address
-  id: Bytes!
-  # An owner entity is associated with an array of farms they created
-  createdFarms: [Farm!] @derivedFrom(field: "farmCreatedBy")
 }
 
 type Foreman @entity {
@@ -82,7 +70,9 @@ type Payment @entity(immutable: true) {
   # address
   id: Bytes!
   #date: String!
-  amount: Int!
+  amount: BigInt!
+  # dayspaidFor = worker.daysUnpaid
+  daysPaidFor: Int!
   # Each payment is made by ONE farm
   farmWhoPaid: Farm!
   # Each payment is made to ONE worker
@@ -93,7 +83,7 @@ type Payment @entity(immutable: true) {
 type CheckIn @entity(immutable: true) {
   # address
   id: Bytes!
-  #@date: String!
+  #date: String!
   # Each checkin is made for ONE farm (the farm worked at)
   # (the farm that the foreman was associated with)
   farmCheckedInAt: Farm!
