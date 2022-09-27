@@ -69,7 +69,11 @@ type Foreman @entity {
 type Payment @entity(immutable: true) {
   # address
   id: Bytes!
-  #date: String!
+  # date
+  year: Int!
+  month: Int!
+  day: Int!
+  # total amount paid to worker
   amount: BigInt!
   # dayspaidFor = worker.daysUnpaid
   daysPaidFor: Int!
@@ -83,7 +87,10 @@ type Payment @entity(immutable: true) {
 type CheckIn @entity(immutable: true) {
   # address
   id: Bytes!
-  #date: String!
+  # date
+  year: Int!
+  month: Int!
+  day: Int!
   # Each checkin is made for ONE farm (the farm worked at)
   # (the farm that the foreman was associated with)
   farmCheckedInAt: Farm!

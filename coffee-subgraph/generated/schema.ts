@@ -310,6 +310,33 @@ export class Payment extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
+  get year(): i32 {
+    let value = this.get("year");
+    return value!.toI32();
+  }
+
+  set year(value: i32) {
+    this.set("year", Value.fromI32(value));
+  }
+
+  get month(): i32 {
+    let value = this.get("month");
+    return value!.toI32();
+  }
+
+  set month(value: i32) {
+    this.set("month", Value.fromI32(value));
+  }
+
+  get day(): i32 {
+    let value = this.get("day");
+    return value!.toI32();
+  }
+
+  set day(value: i32) {
+    this.set("day", Value.fromI32(value));
+  }
+
   get amount(): BigInt {
     let value = this.get("amount");
     return value!.toBigInt();
@@ -376,6 +403,33 @@ export class CheckIn extends Entity {
 
   set id(value: Bytes) {
     this.set("id", Value.fromBytes(value));
+  }
+
+  get year(): i32 {
+    let value = this.get("year");
+    return value!.toI32();
+  }
+
+  set year(value: i32) {
+    this.set("year", Value.fromI32(value));
+  }
+
+  get month(): i32 {
+    let value = this.get("month");
+    return value!.toI32();
+  }
+
+  set month(value: i32) {
+    this.set("month", Value.fromI32(value));
+  }
+
+  get day(): i32 {
+    let value = this.get("day");
+    return value!.toI32();
+  }
+
+  set day(value: i32) {
+    this.set("day", Value.fromI32(value));
   }
 
   get farmCheckedInAt(): Bytes {
