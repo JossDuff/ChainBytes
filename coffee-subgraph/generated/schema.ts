@@ -60,31 +60,55 @@ export class Worker extends Entity {
     this.set("daysUnpaid", Value.fromI32(value));
   }
 
-  get payments(): Array<string> {
+  get payments(): Array<string> | null {
     let value = this.get("payments");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set payments(value: Array<string>) {
-    this.set("payments", Value.fromStringArray(value));
+  set payments(value: Array<string> | null) {
+    if (!value) {
+      this.unset("payments");
+    } else {
+      this.set("payments", Value.fromStringArray(<Array<string>>value));
+    }
   }
 
-  get hasForeman(): Array<string> {
+  get hasForeman(): Array<string> | null {
     let value = this.get("hasForeman");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set hasForeman(value: Array<string>) {
-    this.set("hasForeman", Value.fromStringArray(value));
+  set hasForeman(value: Array<string> | null) {
+    if (!value) {
+      this.unset("hasForeman");
+    } else {
+      this.set("hasForeman", Value.fromStringArray(<Array<string>>value));
+    }
   }
 
-  get checkIns(): Array<string> {
+  get checkIns(): Array<string> | null {
     let value = this.get("checkIns");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set checkIns(value: Array<string>) {
-    this.set("checkIns", Value.fromStringArray(value));
+  set checkIns(value: Array<string> | null) {
+    if (!value) {
+      this.unset("checkIns");
+    } else {
+      this.set("checkIns", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 
@@ -119,31 +143,55 @@ export class Farm extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get farmCheckIns(): Array<string> {
+  get farmCheckIns(): Array<string> | null {
     let value = this.get("farmCheckIns");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set farmCheckIns(value: Array<string>) {
-    this.set("farmCheckIns", Value.fromStringArray(value));
+  set farmCheckIns(value: Array<string> | null) {
+    if (!value) {
+      this.unset("farmCheckIns");
+    } else {
+      this.set("farmCheckIns", Value.fromStringArray(<Array<string>>value));
+    }
   }
 
-  get hasForemen(): Array<string> {
+  get hasForemen(): Array<string> | null {
     let value = this.get("hasForemen");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set hasForemen(value: Array<string>) {
-    this.set("hasForemen", Value.fromStringArray(value));
+  set hasForemen(value: Array<string> | null) {
+    if (!value) {
+      this.unset("hasForemen");
+    } else {
+      this.set("hasForemen", Value.fromStringArray(<Array<string>>value));
+    }
   }
 
-  get madePayments(): Array<string> {
+  get madePayments(): Array<string> | null {
     let value = this.get("madePayments");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set madePayments(value: Array<string>) {
-    this.set("madePayments", Value.fromStringArray(value));
+  set madePayments(value: Array<string> | null) {
+    if (!value) {
+      this.unset("madePayments");
+    } else {
+      this.set("madePayments", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 
@@ -187,22 +235,38 @@ export class Foreman extends Entity {
     this.set("hasFarm", Value.fromString(value));
   }
 
-  get madeCheckIns(): Array<string> {
+  get madeCheckIns(): Array<string> | null {
     let value = this.get("madeCheckIns");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set madeCheckIns(value: Array<string>) {
-    this.set("madeCheckIns", Value.fromStringArray(value));
+  set madeCheckIns(value: Array<string> | null) {
+    if (!value) {
+      this.unset("madeCheckIns");
+    } else {
+      this.set("madeCheckIns", Value.fromStringArray(<Array<string>>value));
+    }
   }
 
-  get hasWorkers(): Array<string> {
+  get hasWorkers(): Array<string> | null {
     let value = this.get("hasWorkers");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set hasWorkers(value: Array<string>) {
-    this.set("hasWorkers", Value.fromStringArray(value));
+  set hasWorkers(value: Array<string> | null) {
+    if (!value) {
+      this.unset("hasWorkers");
+    } else {
+      this.set("hasWorkers", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 

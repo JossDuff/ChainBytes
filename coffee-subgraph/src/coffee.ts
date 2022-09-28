@@ -9,6 +9,11 @@ import {
 } from "../generated/coffee/coffee"
 import { Worker, Farm, Foreman, Payment, CheckIn } from "../generated/schema"
 
+export function handleOwnershipTransferred(event: OwnershipTransferred): void {
+  // does nothing!
+  // we don't have to handle owner relationships in thegraph, but we have to have this 
+  // function signature or else syncing will fail.
+}
 
 // helper function.  Extracts the year, month, and day of a date string in format YYYYMMDD
 // returns an i32 array with 3 entries: [year, month, day]
@@ -34,10 +39,10 @@ function parseDate(date: string): i32[] {
 
 export function handlenewFarm(event: newFarm): void {
   // checks if a farm with that address already exists
-  let newFarm = Farm.load(event.params.farmAddress.toString());
+  let newFarm = Farm.load(event.params.farmAddress.toHex());
   // if not, create the new farm
   if(!newFarm) {
-    newFarm = new Farm(event.params.farmAddress.toString());
+    newFarm = new Farm(event.params.farmAddress.toHex());
     newFarm.farmCheckIns = [];
     newFarm.hasForemen = [];
     newFarm.madePayments = [];
@@ -47,48 +52,67 @@ export function handlenewFarm(event: newFarm): void {
 
 export function handlenewForeman(event: newForeman): void {
   // checks if a foreman with that address already exists
-  let newForeman = Foreman.load(event.params.foreman.toString());
+  let newForeman = Foreman.load(event.params.foreman.toHex());
   // if not, create the new foreman
   if(!newForeman) {
-    newForeman = new Foreman(event.params.foreman.toString());
+    newForeman = new Foreman(event.params.foreman.toHex());
     // sets to the farm who created the foreman
-    newForeman.hasFarm = event.transaction.from.toString();
+    newForeman.hasFarm = event.transaction.from.toHex();
     newForeman.madeCheckIns = [];
     newForeman.hasWorkers = [];
   }
+
+  // Update farm
+  let farm = Farm.load(event.transaction.from.toHex());
+  if(!farm){
+    farm = new Farm(event.transaction.from.toHex());
+    farm.farmCheckIns = [];
+    farm.hasForemen = [];
+    farm.madePayments = [];
+    log.critical("newForeman event emitted but no farm with this address exists in table",[]);
+  }
+
+  // add foreman to farm's hasForeman array
+  if(farm.hasForemen != null){
+    if(!farm.hasForemen!.includes(newForeman.id)){
+      farm.hasForemen!.push(newForeman.id);
+    }
+  }
+
+  farm.save();
   newForeman.save();
 }
 
 export function handleworkerCheckedIn(event: workerCheckedIn): void {
 
-  /*╔═════════════════════════════╗
-    ║       UPDATE WORKER         ║
-    ╚═════════════════════════════╝
-    - create new worker if they don't exist
-      - daysWorker = 1
-      - daysUnpaid = 1
-      - payments = []
-      - hasForeman = event.params.foreman
+    // ╔═════════════════════════════╗
+    // ║       UPDATE WORKER         ║
+    // ╚═════════════════════════════╝
+    // - create new worker if they don't exist
+    //   - daysWorker = 1
+    //   - daysUnpaid = 1
+    //   - payments = []
+    //   - hasForeman = event.params.foreman
       
-    - if worker exists, load
-      - increment daysWorked and daysUnpaid 
-      - add foreman to hasForeman array (if they aren't already there)
+    // - if worker exists, load
+    //   - increment daysWorked and daysUnpaid 
+    //   - add foreman to hasForeman array (if they aren't already there)
 
-    - add checkin to worker's checkIns array
-  */
+    // - add checkin to worker's checkIns array
+  
 
-  let worker = Worker.load(event.params.worker.toString());
+  let worker = Worker.load(event.params.worker.toHex());
 
   // if the worker doesn't exist, create one
   if(!worker){
-    worker = new Worker(event.params.worker.toString());
+    worker = new Worker(event.params.worker.toHex());
     // being checked in means they worked one day
     worker.daysWorked = 1;
     // They haven't been paid yet since they get checked in before
     // they get paid.
     worker.daysUnpaid = 1;
     worker.payments = [];
-    worker.hasForeman = [event.params.foreman.toString()];
+    worker.hasForeman = [event.params.foreman.toHex()];
     worker.checkIns = [];
   }
   else {
@@ -96,26 +120,28 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
     // and days unpaid by 1.
     worker.daysWorked += 1;
     worker.daysUnpaid += 1;
-    if(!worker.hasForeman.includes(event.params.foreman.toString())) {
-      worker.hasForeman.push(event.params.foreman.toString());
+    if(worker.hasForeman!=null){
+      if(!worker.hasForeman!.includes(event.params.foreman.toHex())) {
+        worker.hasForeman!.push(event.params.foreman.toHex());
+      }
     }
   }
 
 
-  /*╔═════════════════════════════╗
-    ║       UPDATE FOREMAN        ║
-    ╚═════════════════════════════╝
-    - load the foreman. foreman should already exist
-    - add worker to the hasWorker array (if they don't already exist)
-    - add the checkin to foreman's madeCheckin's array
-  */
-  let foreman = Foreman.load(event.params.foreman.toString());
+    // ╔═════════════════════════════╗
+    // ║       UPDATE FOREMAN        ║
+    // ╚═════════════════════════════╝
+    // - load the foreman. foreman should already exist
+    // - add worker to the hasWorker array (if they don't already exist)
+    // - add the checkin to foreman's madeCheckin's array
+  
+  let foreman = Foreman.load(event.params.foreman.toHex());
   // A checkin cannot exist without a foreman because coffee.sol
   // checkIn() function is only callable by a foreman, but
   // the subgraph doesn't know that so we have to have this check.
   if(!foreman) {
-    foreman = new Foreman(event.params.foreman.toString());
-    foreman.hasFarm = event.transaction.from.toString();
+    foreman = new Foreman(event.params.foreman.toHex());
+    foreman.hasFarm = event.transaction.from.toHex();
     foreman.hasWorkers = [];
     foreman.madeCheckIns = [];
     log.critical(
@@ -126,22 +152,24 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
 
   // If the array of associated workers for a foreman doesn't
   // already include this worker, add this worker to the array.
-  if(!foreman.hasWorkers.includes(worker.id)){
-    foreman.hasWorkers.push(worker.id);
+  if(foreman.hasWorkers != null){
+    if(!foreman.hasWorkers!.includes(worker.id)){
+      foreman.hasWorkers!.push(worker.id);
+    }
   }
 
 
-  /*╔═════════════════════════════╗
-    ║       UPDATE CHECKIN        ║
-    ╚═════════════════════════════╝
-    - create new checkin
-    - set farmCheckedInAt to the foreman's farm
-    - set foremanWhoChecked to the foreman
-    - set workerChecked in to the worker
-    - set year, month, day to the parsed date
-  */
+    // ╔═════════════════════════════╗
+    // ║       UPDATE CHECKIN        ║
+    // ╚═════════════════════════════╝
+    // - create new checkin
+    // - set farmCheckedInAt to the foreman's farm
+    // - set foremanWhoChecked to the foreman
+    // - set workerChecked in to the worker
+    // - set year, month, day to the parsed date
+  
   // Create new checkin and sets the ID to transaction hash since hashes are unique
-  let checkin = new CheckIn(event.transaction.hash.toString());
+  let checkin = new CheckIn(event.transaction.hash.toHex());
   checkin.farmCheckedInAt = foreman.hasFarm;
   checkin.foremanWhoChecked = foreman.id;
   checkin.workerCheckedIn = worker.id;
@@ -151,25 +179,34 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
   checkin.month = parsedDate[1];
   checkin.day = parsedDate[2];
 
-  /*╔═══════════════════════════╗
-    ║       UPDATE FARM         ║
-    ╚═══════════════════════════╝
-    - load farm.  Farm should already exist
-    - add checkin to farm's checkin array
-  */
+    // ╔═══════════════════════════╗
+    // ║       UPDATE FARM         ║
+    // ╚═══════════════════════════╝
+    // - load farm.  Farm should already exist
+    // - add checkin to farm's checkin array
+  
   let farm = Farm.load(foreman.hasFarm);
   if(!farm){
     farm = new Farm(foreman.hasFarm);
     farm.farmCheckIns = [];
     farm.hasForemen = [];
     farm.madePayments = [];
-    log.critical("Worker checkedIn by foreman without a farm",[]);
+    log.critical(
+      "Worker checkedIn by foreman but farm address doesn't exist in table",
+      []
+    );
   }
 
   // finally, add the CheckIn to the worker, foreman, and farm's arrays
-  worker.checkIns.push(checkin.id);
-  foreman.madeCheckIns.push(checkin.id);
-  farm.farmCheckIns.push(checkin.id)
+  if(worker.checkIns!=null){
+    worker.checkIns!.push(checkin.id);
+  }
+  if(foreman.madeCheckIns!=null){
+    foreman.madeCheckIns!.push(checkin.id);
+  }
+  if(farm.farmCheckIns!=null){
+    farm.farmCheckIns!.push(checkin.id);
+  }
 
   // save all entities modified
   worker.save();
@@ -179,38 +216,38 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
 }
 
 export function handleworkerPaid(event: workerPaid): void {
-  /*╔═════════════════════════════╗
-    ║       UPDATE WORKER         ║
-    ╚═════════════════════════════╝
-    - load worker.  Worker should already exist
-    - set worker daysUnpaid to 0
-    - add payment to worker's payment array
-  */
-  let worker = Worker.load(event.params.worker.toString()); 
+    // ╔═════════════════════════════╗
+    // ║       UPDATE WORKER         ║
+    // ╚═════════════════════════════╝
+    // - load worker.  Worker should already exist
+    // - set worker daysUnpaid to 0
+    // - add payment to worker's payment array
+  
+  let worker = Worker.load(event.params.worker.toHex()); 
   // We are assuming that a worker will never be paid before being
   // checked in, so the worker should already exist.
   if(!worker){
-    worker = new Worker(event.params.worker.toString());
+    worker = new Worker(event.params.worker.toHex());
     worker.daysWorked = 1;
     worker.daysUnpaid = 1;
     worker.payments = [];
     worker.hasForeman = [];
     worker.checkIns = [];
-    log.warning("Worker was paid before being checked in", []);
+    log.critical("Worker was paid before being checked in", []);
   }
   // Worker is now paid for all their previous days unpaid
   let oldDaysUnpaid = worker.daysUnpaid;
   worker.daysUnpaid = 0;
 
-   /*╔═══════════════════════════╗
-     ║       UPDATE FARM         ║
-     ╚═══════════════════════════╝
-    - load farm.  Farm should already exist
-    - add payment to farm's payment array
-  */
-  let farm = Farm.load(event.params.farm.toString());
+    //  ╔═══════════════════════════╗
+    //  ║       UPDATE FARM         ║
+    //  ╚═══════════════════════════╝
+    // - load farm.  Farm should already exist
+    // - add payment to farm's payment array
+  
+  let farm = Farm.load(event.params.farm.toHex());
   if(!farm){
-    farm = new Farm(event.params.farm.toString());
+    farm = new Farm(event.params.farm.toHex());
     farm.farmCheckIns = [];
     farm.hasForemen = [];
     farm.madePayments = [];
@@ -220,17 +257,17 @@ export function handleworkerPaid(event: workerPaid): void {
     );
   }
 
-  /*╔═════════════════════════════╗
-    ║       UPDATE PAYMENT        ║
-    ╚═════════════════════════════╝
-    - create new payment entry
-    - set year, month, day to parsed date
-    - amount = event.params.amount
-    - daysPaidFor = worker's daysUnpaid (before updating to 0)
-    - farmWhoPaid = event.params.farm
-    - workerPaid = event.params.worker
-  */
-  let payment = new Payment(event.transaction.hash.toString());
+    // ╔═════════════════════════════╗
+    // ║       UPDATE PAYMENT        ║
+    // ╚═════════════════════════════╝
+    // - create new payment entry
+    // - set year, month, day to parsed date
+    // - amount = event.params.amount
+    // - daysPaidFor = worker's daysUnpaid (before updating to 0)
+    // - farmWhoPaid = event.params.farm
+    // - workerPaid = event.params.worker
+  
+  let payment = new Payment(event.transaction.hash.toHex());
   payment.amount = event.params.amount;
   payment.daysPaidFor = oldDaysUnpaid;
   // Parse date and assign
@@ -243,13 +280,18 @@ export function handleworkerPaid(event: workerPaid): void {
 
 
   // finally, add the CheckIn to the worker and farm's arrays 
-  worker.payments.push(payment.id);
-  farm.madePayments.push(payment.id)
+  if(worker.payments!=null){
+    worker.payments!.push(payment.id);
+  }
+  if(farm.madePayments!=null){
+    farm.madePayments!.push(payment.id);
+  }
 
   // save entities modified
   worker.save();
   payment.save();
 }
+
 
   /*╔══════════════════════════════════════════════════════════╗
     ║       BELOW ARE JUST NOTES GENERATED BY THEGRAPH         ║

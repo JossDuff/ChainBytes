@@ -33,22 +33,22 @@ type Worker @entity {
   daysWorked: Int!
   daysUnpaid: Int!
   # Worker has many payments
-  payments: [Payment!]!
+  payments: [Payment!]
   # Worker can be checked in by many different foremen
-  hasForeman: [Foreman!]!
+  hasForeman: [Foreman!]
   # Worker has many checkins
-  checkIns: [CheckIn!]!
+  checkIns: [CheckIn!]
 }
 
 type Farm @entity {
   # address
   id: String!
   # Farm is assocated with many CheckIn events
-  farmCheckIns: [CheckIn!]!
+  farmCheckIns: [CheckIn!]
   # Farm has many Foremen
-  hasForemen: [Foreman!]!
+  hasForemen: [Foreman!]
   # Farm makes many payments
-  madePayments: [Payment!]!
+  madePayments: [Payment!]
 }
 
 type Foreman @entity {
@@ -57,9 +57,9 @@ type Foreman @entity {
   # Each forman is associated with ONE farm
   hasFarm: Farm!
   # Each foreman makes many checkin events
-  madeCheckIns: [CheckIn!]!
+  madeCheckIns: [CheckIn!]
   # Each foremen is associated with many workers.
-  hasWorkers: [Worker!]!
+  hasWorkers: [Worker!]
 }
 
 # payment is a historical value, so it shouldn't be mutable
