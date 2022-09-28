@@ -12,9 +12,9 @@ import {
 } from "@graphprotocol/graph-ts";
 
 export class Worker extends Entity {
-  constructor(id: Bytes) {
+  constructor(id: string) {
     super();
-    this.set("id", Value.fromBytes(id));
+    this.set("id", Value.fromString(id));
   }
 
   save(): void {
@@ -22,24 +22,24 @@ export class Worker extends Entity {
     assert(id != null, "Cannot save Worker entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type Worker must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.STRING,
+        `Entities of type Worker must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("Worker", id.toBytes().toHexString(), this);
+      store.set("Worker", id.toString(), this);
     }
   }
 
-  static load(id: Bytes): Worker | null {
-    return changetype<Worker | null>(store.get("Worker", id.toHexString()));
+  static load(id: string): Worker | null {
+    return changetype<Worker | null>(store.get("Worker", id));
   }
 
-  get id(): Bytes {
+  get id(): string {
     let value = this.get("id");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
   get daysWorked(): i32 {
@@ -60,62 +60,38 @@ export class Worker extends Entity {
     this.set("daysUnpaid", Value.fromI32(value));
   }
 
-  get payments(): Array<Bytes> | null {
+  get payments(): Array<string> {
     let value = this.get("payments");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set payments(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("payments");
-    } else {
-      this.set("payments", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set payments(value: Array<string>) {
+    this.set("payments", Value.fromStringArray(value));
   }
 
-  get hasForeman(): Array<Bytes> | null {
+  get hasForeman(): Array<string> {
     let value = this.get("hasForeman");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set hasForeman(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("hasForeman");
-    } else {
-      this.set("hasForeman", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set hasForeman(value: Array<string>) {
+    this.set("hasForeman", Value.fromStringArray(value));
   }
 
-  get checkIns(): Array<Bytes> | null {
+  get checkIns(): Array<string> {
     let value = this.get("checkIns");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set checkIns(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("checkIns");
-    } else {
-      this.set("checkIns", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set checkIns(value: Array<string>) {
+    this.set("checkIns", Value.fromStringArray(value));
   }
 }
 
 export class Farm extends Entity {
-  constructor(id: Bytes) {
+  constructor(id: string) {
     super();
-    this.set("id", Value.fromBytes(id));
+    this.set("id", Value.fromString(id));
   }
 
   save(): void {
@@ -123,91 +99,58 @@ export class Farm extends Entity {
     assert(id != null, "Cannot save Farm entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type Farm must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.STRING,
+        `Entities of type Farm must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("Farm", id.toBytes().toHexString(), this);
+      store.set("Farm", id.toString(), this);
     }
   }
 
-  static load(id: Bytes): Farm | null {
-    return changetype<Farm | null>(store.get("Farm", id.toHexString()));
+  static load(id: string): Farm | null {
+    return changetype<Farm | null>(store.get("Farm", id));
   }
 
-  get id(): Bytes {
+  get id(): string {
     let value = this.get("id");
-    return value!.toBytes();
-  }
-
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
-  }
-
-  get name(): string {
-    let value = this.get("name");
     return value!.toString();
   }
 
-  set name(value: string) {
-    this.set("name", Value.fromString(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
-  get farmCheckIns(): Array<Bytes> | null {
+  get farmCheckIns(): Array<string> {
     let value = this.get("farmCheckIns");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set farmCheckIns(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("farmCheckIns");
-    } else {
-      this.set("farmCheckIns", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set farmCheckIns(value: Array<string>) {
+    this.set("farmCheckIns", Value.fromStringArray(value));
   }
 
-  get hasForemen(): Array<Bytes> | null {
+  get hasForemen(): Array<string> {
     let value = this.get("hasForemen");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set hasForemen(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("hasForemen");
-    } else {
-      this.set("hasForemen", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set hasForemen(value: Array<string>) {
+    this.set("hasForemen", Value.fromStringArray(value));
   }
 
-  get madePayments(): Array<Bytes> | null {
+  get madePayments(): Array<string> {
     let value = this.get("madePayments");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set madePayments(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("madePayments");
-    } else {
-      this.set("madePayments", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set madePayments(value: Array<string>) {
+    this.set("madePayments", Value.fromStringArray(value));
   }
 }
 
 export class Foreman extends Entity {
-  constructor(id: Bytes) {
+  constructor(id: string) {
     super();
-    this.set("id", Value.fromBytes(id));
+    this.set("id", Value.fromString(id));
   }
 
   save(): void {
@@ -215,74 +158,58 @@ export class Foreman extends Entity {
     assert(id != null, "Cannot save Foreman entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type Foreman must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.STRING,
+        `Entities of type Foreman must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("Foreman", id.toBytes().toHexString(), this);
+      store.set("Foreman", id.toString(), this);
     }
   }
 
-  static load(id: Bytes): Foreman | null {
-    return changetype<Foreman | null>(store.get("Foreman", id.toHexString()));
+  static load(id: string): Foreman | null {
+    return changetype<Foreman | null>(store.get("Foreman", id));
   }
 
-  get id(): Bytes {
+  get id(): string {
     let value = this.get("id");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
-  get hasFarm(): Bytes {
+  get hasFarm(): string {
     let value = this.get("hasFarm");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set hasFarm(value: Bytes) {
-    this.set("hasFarm", Value.fromBytes(value));
+  set hasFarm(value: string) {
+    this.set("hasFarm", Value.fromString(value));
   }
 
-  get madeCheckIns(): Array<Bytes> | null {
+  get madeCheckIns(): Array<string> {
     let value = this.get("madeCheckIns");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set madeCheckIns(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("madeCheckIns");
-    } else {
-      this.set("madeCheckIns", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set madeCheckIns(value: Array<string>) {
+    this.set("madeCheckIns", Value.fromStringArray(value));
   }
 
-  get hasWorkers(): Array<Bytes> | null {
+  get hasWorkers(): Array<string> {
     let value = this.get("hasWorkers");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toStringArray();
   }
 
-  set hasWorkers(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("hasWorkers");
-    } else {
-      this.set("hasWorkers", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set hasWorkers(value: Array<string>) {
+    this.set("hasWorkers", Value.fromStringArray(value));
   }
 }
 
 export class Payment extends Entity {
-  constructor(id: Bytes) {
+  constructor(id: string) {
     super();
-    this.set("id", Value.fromBytes(id));
+    this.set("id", Value.fromString(id));
   }
 
   save(): void {
@@ -290,24 +217,24 @@ export class Payment extends Entity {
     assert(id != null, "Cannot save Payment entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type Payment must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.STRING,
+        `Entities of type Payment must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("Payment", id.toBytes().toHexString(), this);
+      store.set("Payment", id.toString(), this);
     }
   }
 
-  static load(id: Bytes): Payment | null {
-    return changetype<Payment | null>(store.get("Payment", id.toHexString()));
+  static load(id: string): Payment | null {
+    return changetype<Payment | null>(store.get("Payment", id));
   }
 
-  get id(): Bytes {
+  get id(): string {
     let value = this.get("id");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
   get year(): i32 {
@@ -355,29 +282,29 @@ export class Payment extends Entity {
     this.set("daysPaidFor", Value.fromI32(value));
   }
 
-  get farmWhoPaid(): Bytes {
+  get farmWhoPaid(): string {
     let value = this.get("farmWhoPaid");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set farmWhoPaid(value: Bytes) {
-    this.set("farmWhoPaid", Value.fromBytes(value));
+  set farmWhoPaid(value: string) {
+    this.set("farmWhoPaid", Value.fromString(value));
   }
 
-  get workerPaid(): Bytes {
+  get workerPaid(): string {
     let value = this.get("workerPaid");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set workerPaid(value: Bytes) {
-    this.set("workerPaid", Value.fromBytes(value));
+  set workerPaid(value: string) {
+    this.set("workerPaid", Value.fromString(value));
   }
 }
 
 export class CheckIn extends Entity {
-  constructor(id: Bytes) {
+  constructor(id: string) {
     super();
-    this.set("id", Value.fromBytes(id));
+    this.set("id", Value.fromString(id));
   }
 
   save(): void {
@@ -385,24 +312,24 @@ export class CheckIn extends Entity {
     assert(id != null, "Cannot save CheckIn entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.BYTES,
-        `Entities of type CheckIn must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.STRING,
+        `Entities of type CheckIn must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("CheckIn", id.toBytes().toHexString(), this);
+      store.set("CheckIn", id.toString(), this);
     }
   }
 
-  static load(id: Bytes): CheckIn | null {
-    return changetype<CheckIn | null>(store.get("CheckIn", id.toHexString()));
+  static load(id: string): CheckIn | null {
+    return changetype<CheckIn | null>(store.get("CheckIn", id));
   }
 
-  get id(): Bytes {
+  get id(): string {
     let value = this.get("id");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set id(value: Bytes) {
-    this.set("id", Value.fromBytes(value));
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
   }
 
   get year(): i32 {
@@ -432,30 +359,30 @@ export class CheckIn extends Entity {
     this.set("day", Value.fromI32(value));
   }
 
-  get farmCheckedInAt(): Bytes {
+  get farmCheckedInAt(): string {
     let value = this.get("farmCheckedInAt");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set farmCheckedInAt(value: Bytes) {
-    this.set("farmCheckedInAt", Value.fromBytes(value));
+  set farmCheckedInAt(value: string) {
+    this.set("farmCheckedInAt", Value.fromString(value));
   }
 
-  get foremanWhoChecked(): Bytes {
+  get foremanWhoChecked(): string {
     let value = this.get("foremanWhoChecked");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set foremanWhoChecked(value: Bytes) {
-    this.set("foremanWhoChecked", Value.fromBytes(value));
+  set foremanWhoChecked(value: string) {
+    this.set("foremanWhoChecked", Value.fromString(value));
   }
 
-  get workerCheckedIn(): Bytes {
+  get workerCheckedIn(): string {
     let value = this.get("workerCheckedIn");
-    return value!.toBytes();
+    return value!.toString();
   }
 
-  set workerCheckedIn(value: Bytes) {
-    this.set("workerCheckedIn", Value.fromBytes(value));
+  set workerCheckedIn(value: string) {
+    this.set("workerCheckedIn", Value.fromString(value));
   }
 }
