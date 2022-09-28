@@ -1,7 +1,7 @@
 {
-  "rinkeby": {
+  "goerli": {
     "coffee": {
-      "address": "0x9EbbB0D9c378bf5E6B9c334a5948De49EE4F61Af"
+      "address": "0x06C3917A92679896807bf7deA45409aCA2327FBD"
     }
   }
 }

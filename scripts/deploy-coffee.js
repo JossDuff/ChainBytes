@@ -36,7 +36,7 @@ async function main () {
     totalGasCost = totalGasCost.add(await logTransactionGas(itemCollectionDeploy.deployTransaction)); //spends my eth to finalize on chain
 
     // Verify the smart contract on Etherscan.
-    console.log(`[$]: npx hardhat verify --network rinkeby ${itemCollection.address}`);
+    console.log(`[$]: npx hardhat verify --network goerli ${itemCollection.address}`);
 
     // Output the final gas cost.
     console.log('');
