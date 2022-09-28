@@ -9,7 +9,20 @@ import {
 } from "../generated/coffee/coffee"
 import { Worker, Farm, Foreman, Payment, CheckIn } from "../generated/schema"
 
-//function parse_date()
+
+// helper function.  Extracts the year, month, and day of a date string in format YYYYMMDD
+function parseDate(date: string): [number, number, number] {
+  let thisYear, thisMonth, thisDay;
+  // first 4 chars are year
+  thisYear = parseInt(date.slice(0,4));
+  // next 2 chars are month
+  thisMonth = parseInt(date.slice(4,6));
+  // last 2 chars are days
+  // omitting the second parameter slices out the rest of the string
+  thisDay = parseInt(date.slice(6));
+
+  return [thisYear, thisMonth, thisDay];
+}
 
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
@@ -17,14 +30,24 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
 }
 
 export function handlenewFarm(event: newFarm): void {
-  let newFarm = new Farm(event.params.farmAddress);
+  // checks if a farm with that address already exists
+  let newFarm = Farm.load(event.params.farmAddress);
+  // if not, create the new farm
+  if(!newFarm) {
+    newFarm = new Farm(event.params.farmAddress);
+  }
   newFarm.save();
 }
 
 export function handlenewForeman(event: newForeman): void {
-  let newForeman = new Foreman(event.params.foreman);
-  // sets to the farm who created the foreman
-  newForeman.hasFarm = event.transaction.from;
+  // checks if a foreman with that address already exists
+  let newForeman = Foreman.load(event.params.foreman);
+  // if not, create the new foreman
+  if(!newForeman) {
+    newForeman = new Foreman(event.params.foreman);
+    // sets to the farm who created the foreman
+    newForeman.hasFarm = event.transaction.from;
+  }
   newForeman.save();
 }
 
@@ -50,7 +73,6 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
     worker.daysWorked += 1;
     worker.daysUnpaid += 1;
   }
-
   worker.save();
 
 
@@ -81,6 +103,11 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
   checkin.farmCheckedInAt = foreman.hasFarm;
   checkin.foremanWhoChecked = foreman.id;
   checkin.workerCheckedIn = worker.id;
+  // Parse date and assign
+  let parsedDate = parseDate(event.params.date);
+  checkin.year = parsedDate[0];
+  checkin.month = parsedDate[1];
+  checkin.day = parsedDate[2];
   checkin.save();
 }
 
@@ -102,10 +129,14 @@ export function handleworkerPaid(event: workerPaid): void {
   /*╔═════════════════════════════╗
     ║       UPDATE PAYMENT        ║
     ╚═════════════════════════════╝*/
-  
   let payment = new Payment(event.transaction.hash);
   payment.amount = event.params.amount;
   payment.daysPaidFor = oldDaysUnpaid;
+  // Parse date and assign
+  let parsedDate = parseDate(event.params.date);
+  payment.year = parsedDate[0];
+  payment.month = parsedDate[1];
+  payment.day = parsedDate[2];
   // I'm assuming we can do it this way instead of loading in
   // the farm (which takes time).
   payment.farmWhoPaid = event.params.farm;
