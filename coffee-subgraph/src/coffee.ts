@@ -77,6 +77,8 @@ export function handlenewForeman(event: newForeman): void {
     if(!farm.hasForemen!.includes(newForeman.id)){
       farm.hasForemen!.push(newForeman.id);
     }
+  } else{
+    farm.hasForemen = [newForeman.id];
   }
 
   farm.save();
@@ -124,6 +126,8 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
       if(!worker.hasForeman!.includes(event.params.foreman.toHex())) {
         worker.hasForeman!.push(event.params.foreman.toHex());
       }
+    } else {
+      worker.hasForeman = [event.params.foreman.toHex()];
     }
   }
 
@@ -156,6 +160,8 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
     if(!foreman.hasWorkers!.includes(worker.id)){
       foreman.hasWorkers!.push(worker.id);
     }
+  } else {
+    foreman.hasWorkers = [worker.id];
   }
 
 
@@ -200,12 +206,20 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
   // finally, add the CheckIn to the worker, foreman, and farm's arrays
   if(worker.checkIns!=null){
     worker.checkIns!.push(checkin.id);
+  } else {
+    worker.checkIns = [checkin.id];
   }
+
   if(foreman.madeCheckIns!=null){
     foreman.madeCheckIns!.push(checkin.id);
+  } else {
+    foreman.madeCheckIns = [checkin.id];
   }
+
   if(farm.farmCheckIns!=null){
     farm.farmCheckIns!.push(checkin.id);
+  } else {
+    farm.farmCheckIns = [checkin.id];
   }
 
   // save all entities modified
@@ -282,9 +296,14 @@ export function handleworkerPaid(event: workerPaid): void {
   // finally, add the CheckIn to the worker and farm's arrays 
   if(worker.payments!=null){
     worker.payments!.push(payment.id);
+  } else {
+    worker.payments = [payment.id];
   }
+
   if(farm.madePayments!=null){
     farm.madePayments!.push(payment.id);
+  } else {
+    farm.madePayments = [payment.id];
   }
 
   // save entities modified
