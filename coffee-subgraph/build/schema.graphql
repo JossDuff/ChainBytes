@@ -33,22 +33,22 @@ type Worker @entity {
   daysWorked: Int!
   daysUnpaid: Int!
   # Worker has many payments
-  payments: [Payment!]
+  payments: [Payment!] @derivedFrom(field: "workerPaid")
   # Worker can be checked in by many different foremen
   hasForeman: [Foreman!]
   # Worker has many checkins
-  checkIns: [CheckIn!]
+  checkIns: [CheckIn!] @derivedFrom(field: "workerCheckedIn")
 }
 
 type Farm @entity {
   # address
   id: String!
   # Farm is assocated with many CheckIn events
-  farmCheckIns: [CheckIn!]
+  farmCheckIns: [CheckIn!] @derivedFrom(field: "farmCheckedInAt")
   # Farm has many Foremen
-  hasForemen: [Foreman!]
+  hasForemen: [Foreman!] @derivedFrom(field: "hasFarm")
   # Farm makes many payments
-  madePayments: [Payment!]
+  madePayments: [Payment!] @derivedFrom(field: "farmWhoPaid")
 }
 
 type Foreman @entity {
@@ -57,9 +57,9 @@ type Foreman @entity {
   # Each forman is associated with ONE farm
   hasFarm: Farm!
   # Each foreman makes many checkin events
-  madeCheckIns: [CheckIn!]
+  madeCheckIns: [CheckIn!] @derivedFrom(field: "foremanWhoChecked")
   # Each foremen is associated with many workers.
-  hasWorkers: [Worker!]
+  hasWorkers: [Worker!] @derivedFrom(field: "hasForeman")
 }
 
 # payment is a historical value, so it shouldn't be mutable
