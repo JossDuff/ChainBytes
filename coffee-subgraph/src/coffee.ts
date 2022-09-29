@@ -1,4 +1,4 @@
-import { BigInt, log } from "@graphprotocol/graph-ts"
+import { Address, log } from "@graphprotocol/graph-ts"
 import {
   coffee,
   OwnershipTransferred,
@@ -288,9 +288,27 @@ export function handleworkerPaid(event: workerPaid): void {
   }
 
   // save entities modified
+  farm.save();
   worker.save();
   payment.save();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   /*╔══════════════════════════════════════════════════════════╗

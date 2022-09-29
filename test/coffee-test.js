@@ -90,7 +90,7 @@ describe("coffee contract", function () {
       //now have the foreman try to create a farm
       await expect(
         hardhatCoffee.connect(addr2).payWorkers(workers, amounts, date, {
-          value: ethers.utils.parseEther("4.0"),
+          value: 4,
         })
       ).to.be.reverted;
     });
@@ -107,7 +107,7 @@ describe("coffee contract", function () {
 
       await expect(
         hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
-          value: ethers.utils.parseEther("6.0"),
+          value: 6,
         })
       )
         .to.emit(hardhatCoffee, "workerPaid")
@@ -130,7 +130,7 @@ describe("coffee contract", function () {
 
       await expect(
         hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
-          value: ethers.utils.parseEther("3.0"),
+          value: 3,
         })
       ).to.be.reverted;
     });
@@ -148,7 +148,7 @@ describe("coffee contract", function () {
 
       await expect(
         hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
-          value: ethers.utils.parseEther("8.0"),
+          value: 8,
         })
       ).to.be.reverted;
     });

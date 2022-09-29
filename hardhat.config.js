@@ -32,8 +32,8 @@ module.exports = {
   networks: {
     hardhat: {},
     goerli: {
-      url: `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_PROJECT_ID}`,
-      accounts: [ `0x${DEPLOYER_PRIVATE_KEY}` ]
+      url: `https://eth-goerli.g.alchemy.com/v2/eKlYL5JTF_h_t0YfnlsRfqyGu4avTfXM`,
+      accounts: [ `0xa8d37f04d3f4de9669d10b798b1fd90b7c7b3dfd6223a74c1e1b8f59840f7428` ]
     },
     // lueth: {
     //   url: "http://vitalik.cse.lehigh.edu:8545",
