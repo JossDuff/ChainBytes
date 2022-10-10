@@ -55,6 +55,11 @@ describe("coffee contract", function () {
     });
   });
 
+  //
+  //bit of a more complicated test here
+  //checking in a worker using dummy data and then checking to make sure the proper event fires
+  //with the proper data
+  //
   describe("Checkin event", function () {
     it("Should emit event with caller address (foreman), worker address, and date", async function () {
       //set addr1 as a farm
@@ -75,6 +80,9 @@ describe("coffee contract", function () {
         .withArgs(addr2.address, addr3.address, "August 24th, 2000");
     });
   });
+  //
+  //a failing test that ensures a foreman cant create a farm
+  //
   describe("Foreman attempts to create farm", function () {
     it("Should fail", async function () {
       //set addr1 as a farm
@@ -86,7 +94,9 @@ describe("coffee contract", function () {
         .reverted;
     });
   });
-
+  //
+  //Another failing test, ensures only owners can pay workers
+  //
   describe("Non-owner tries to pay worker", function () {
     it("Should fail", async function () {
       let workers = [addr3.address];
@@ -104,7 +114,10 @@ describe("coffee contract", function () {
       ).to.be.reverted;
     });
   });
-
+  //
+  //tests payWorker function
+  // pays multiple workers specific amounts
+  //
   describe("farm tries to pay workers", function () {
     it("Should pass and emit proper events and correctly update account balances", async function () {
       //build args for payWorkers
