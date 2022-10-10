@@ -24,17 +24,17 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const INFURA_PROJECT_ID = process.env.INFURA_PROJECT_ID;
+const ALCHEMY_PROJECT_ID = process.env.INFURA_PROJECT_ID;
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
 
 module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
-    // rinkeby: {
-    // 	url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
-    // 	accounts: [ `0x${DEPLOYER_PRIVATE_KEY}` ]
-    // },
+    goerli: {
+      url: `https://eth-goerli.g.alchemy.com/v2/`,
+      accounts: [ `` ]
+    },
     // lueth: {
     //   url: "http://vitalik.cse.lehigh.edu:8545",
     //   accounts: [""]  // Insert private key in quotes, and uncomment this block

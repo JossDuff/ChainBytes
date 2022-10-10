@@ -1,0 +1,98 @@
+# Mutability comes at a price, and for entity types for 
+# which it is known that they will never be modified, 
+# for example, because they simply contain data extracted 
+# verbatim from the chain, it is recommended to mark them 
+# as immutable with @entity(immutable: true)
+# Queries on immutable data is much faster than queries on mutable data.
+
+# Each entity must have an id field, which must be of type Bytes! or String!
+# ! means field is mandatory
+# Int has a size of 32 bytes
+# BigInt is for large numbers.  Used for Ethereums uint32 and larger.
+# Bytes is a byte array as a hexadecimal string. Commonly used for 
+#   Eth hashes and addresses
+# String is a scalar for string values.  Null characters are not supported.
+# Boolean 
+
+# custom scalar: date 
+#   YYYY-MM-DD ex: 2000-12-19
+
+# @derivedFrom(field: "fieldInOtherEntity") performs a reverse lookup.
+# This is more performant than storing arrays for each "many" relationship.
+# ex: 
+#   payments: [Payment!] @derivedFrom(field: "workerPaid") #in Worker entity.
+#   workerPaid: Worker! #in Payment entity
+# 
+#   A query for 'payments' of a worker instead queries the "workerPaid" field 
+#   in all Payment entities.  The query returns all the Payment entities who
+#   have that worker in their "workerPaid" field.
+
+type Worker @entity {
+  # address
+  id: String!
+  daysWorked: Int!
+  daysUnpaid: Int!
+  # Worker has many payments
+  payments: [Payment!] @derivedFrom(field: "workerPaid")
+  # Worker can be checked in by many different foremen
+  hasForeman: [Foreman!]
+  # Worker has many checkins
+  checkIns: [CheckIn!] @derivedFrom(field: "workerCheckedIn")
+}
+
+type Farm @entity {
+  # address
+  id: String!
+  # Farm is assocated with many CheckIn events
+  farmCheckIns: [CheckIn!] @derivedFrom(field: "farmCheckedInAt")
+  # Farm has many Foremen
+  hasForemen: [Foreman!] @derivedFrom(field: "hasFarm")
+  # Farm makes many payments
+  madePayments: [Payment!] @derivedFrom(field: "farmWhoPaid")
+}
+
+type Foreman @entity {
+  # address
+  id: String!
+  # Each forman is associated with ONE farm
+  hasFarm: Farm!
+  # Each foreman makes many checkin events
+  madeCheckIns: [CheckIn!] @derivedFrom(field: "foremanWhoChecked")
+  # Each foremen is associated with many workers.
+  hasWorkers: [Worker!] @derivedFrom(field: "hasForeman")
+}
+
+# payment is a historical value, so it shouldn't be mutable
+type Payment @entity(immutable: true) {
+  # address
+  id: String!
+  # date
+  year: Int!
+  month: Int!
+  day: Int!
+  # total amount paid to worker
+  amount: BigInt!
+  # dayspaidFor = worker.daysUnpaid
+  daysPaidFor: Int!
+  # Each payment is made by ONE farm
+  farmWhoPaid: Farm!
+  # Each payment is made to ONE worker
+  workerPaid: Worker!
+}
+
+# payment is a historical value, so it shouldn't be mutable
+type CheckIn @entity(immutable: true) {
+  # address
+  id: String!
+  # date
+  year: Int!
+  month: Int!
+  day: Int!
+  # Each checkin is made for ONE farm (the farm worked at)
+  # (the farm that the foreman was associated with)
+  farmCheckedInAt: Farm!
+  # Each checkin is made by one foreman
+  foremanWhoChecked: Foreman!
+  # Each checkin is made for one worker
+  workerCheckedIn: Worker!
+}

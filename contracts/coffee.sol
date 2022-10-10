@@ -167,7 +167,7 @@ contract coffee is Ownable{
         }
 
         // requires the sum of the amounts array to be equal to
-        if(!(sumAmounts*1e18 == msg.value)){
+        if(!(sumAmounts == msg.value)){
             revert WrongPaymentAmount();
         }
 
@@ -180,7 +180,7 @@ contract coffee is Ownable{
 
             // Pays the worker and requires that it was successful,
             // otherwise it failed and the payment doesn't go through
-            success = payable(_workers[i]).send(_amounts[i]*1e18);
+            success = payable(_workers[i]).send(_amounts[i]);
             
             if(!success){
                 revert PaymentFailed();
