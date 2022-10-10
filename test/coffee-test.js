@@ -1,10 +1,12 @@
 const { expect, use } = require("chai");
 const { ethers } = require("hardhat");
-const {
-  isCallTrace,
-} = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
+
 const provider = ethers.getDefaultProvider();
 describe("coffee contract", function () {
+  //these vars will hold Signers from ethers
+  //Signers are ethers objects that are similar to accounts in Ethereum
+  // they have different attributes like: balance, address
+  //can be used to call contract functions
   let owner;
   let addr1;
   let addr2;
@@ -12,18 +14,24 @@ describe("coffee contract", function () {
 
   beforeEach(async function () {
     coffee = await ethers.getContractFactory("coffee");
+    //the first return from getSigners() is defaulted as the owner of the contract
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
     // Deploys contract
+    //hardhatCoffee is the contract object that is used to call functions
     hardhatCoffee = await coffee.deploy();
   });
-
+  //
+  //test to verify the owner is being properly set after deployment
+  //
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
       expect(await hardhatCoffee.owner()).to.equal(owner.address);
     });
   });
-
+  //
+  //calls create farm passing in address1 and then checks the address using the mapping isFarm
+  //
   describe("Farm creation", function () {
     it("Should assign an address as a farm", async function () {
       await hardhatCoffee.createFarm(addr1.address);
@@ -32,7 +40,8 @@ describe("coffee contract", function () {
       expect(isFarm).to.equal(true);
     });
   });
-
+  //
+  //Creates farm, assigns address2 to a foreman and then checks this worked calling isForeman
   describe("Foreman creation", function () {
     it("Should assign an address as a foreman", async function () {
       // Sets addr1 as a farm
