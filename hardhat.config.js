@@ -1,7 +1,7 @@
 "use strict";
 
 // Configure environment variables.
-require('dotenv').config({path:__dirname+'/.env'}) 
+require('dotenv').config() 
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-deploy");
 require("@nomiclabs/hardhat-ethers");
@@ -26,11 +26,8 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 //console.log(process.env)
 const ALCHEMY_PROJECT_ID = process.env.ALCHEMY_PROJECT_ID;
-console.log(ALCHEMY_PROJECT_ID);
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
-console.log(DEPLOYER_PRIVATE_KEY);
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
-console.log(ETHERSCAN_API_KEY);
 
 module.exports = {
   defaultNetwork: "hardhat",
