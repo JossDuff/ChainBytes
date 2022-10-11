@@ -1,7 +1,7 @@
 "use strict";
 
 // Configure environment variables.
-require("dotenv").config();
+require('dotenv').config({path:__dirname+'/.env'}) 
 require("@nomiclabs/hardhat-waffle");
 require("hardhat-deploy");
 require("@nomiclabs/hardhat-ethers");
@@ -24,16 +24,21 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const ALCHEMY_PROJECT_ID = process.env.INFURA_PROJECT_ID;
+//console.log(process.env)
+const ALCHEMY_PROJECT_ID = process.env.ALCHEMY_PROJECT_ID;
+console.log(ALCHEMY_PROJECT_ID);
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
+console.log(DEPLOYER_PRIVATE_KEY);
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+console.log(ETHERSCAN_API_KEY);
 
 module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
     goerli: {
-      url: `https://eth-goerli.g.alchemy.com/v2/`,
-      accounts: [ `` ]
+      url: `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_PROJECT_ID}`,
+      accounts: [DEPLOYER_PRIVATE_KEY]
     },
     // lueth: {
     //   url: "http://vitalik.cse.lehigh.edu:8545",
@@ -44,7 +49,7 @@ module.exports = {
     version: "0.8.7",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: ETHERSCAN_API_KEY,
   },
   paths: {
     sources: "./contracts",
