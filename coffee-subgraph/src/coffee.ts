@@ -15,21 +15,22 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   // function signature or else syncing will fail.
 }
 
-// helper function.  Extracts the year, month, and day of a date string in format YYYYMMDD
+// helper function.  Extracts the year, month, and day of a date string in format YYYY-MM-DD
 // returns an i32 array with 3 entries: [year, month, day]
-// ex: date "19900103" returns [1990, 01, 03] January 3rd, 1990
+// ex: date "1990-01-03" returns [1990, 01, 03] January 3rd, 1990
 function parseDate(date: string): i32[] {
   let thisYear:i32, thisMonth:i32, thisDay:i32;
   // first 4 chars are year
   thisYear = parseInt(date.slice(0,4)) as i32;
-  // next 2 chars are month
-  thisMonth = parseInt(date.slice(4,6)) as i32;
+  // skip a char, and the next 2 are month
+  thisMonth = parseInt(date.slice(5,7)) as i32;
+  
   if(thisMonth>12){
     log.critical("Incorrect date: month is > 12",[]);
   }
-  // last 2 chars are days
-  // omitting the second parameter slices out the rest of the string
-  thisDay = parseInt(date.slice(6)) as i32;
+  // skip a char, and the next 2 are day
+  thisDay = parseInt(date.slice(8,10)) as i32;
+
   if(thisDay>31){
     log.critical("Incorrect date: day is > 31",[]);
   }
