@@ -6,7 +6,7 @@ dataSources:
     name: coffee
     network: goerli
     source:
-      address: "0xf0db1d758b01D1549f48FE18D0B0733748CdCF80"
+      address: "0xdBfE99f836C95f2470adA8980D8ae01b33bD10A1"
       abi: coffee
     mapping:
       kind: ethereum/events
