@@ -13,3 +13,7 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+
+## deploy
+First, set up .env like .sample-env, then
+$ npx hardhat run --network goerli scripts/deploy-coffee.js
