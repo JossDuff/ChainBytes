@@ -41,8 +41,8 @@ contract coffee is Ownable{
 
     event newFarm(address farmAddress);
     event newForeman(address farmAddress, address foreman);
-    event workerCheckedIn(address foreman, address worker, string date);
-    event workerPaid(address farm, address worker, uint amount, string date);
+    event workerCheckedIn(address foreman, address[] worker, string date);
+    event workerPaid(address farm, address[] worker, uint[] amount, string date);
 
     /**
         Modifier to add to functions that only a farm address can call.
@@ -80,8 +80,7 @@ contract coffee is Ownable{
         Used in onlyFarm modifier.
         Is set in createFarm(address _farmAddress). 
     */
-    //have to make public for testing - Hudson
-    mapping(address => bool) public isFarm;
+    mapping(address => bool) isFarm;
 
     /**
         @notice Only the owner (admin) can call this function to create a new farm.
@@ -104,8 +103,7 @@ contract coffee is Ownable{
         Used in onlyForeman modifier. 
         Set in createForeman(address _foremanAddress).
     */
-    //had to make public for testing - Hudson
-    mapping(address => bool) public isForeman;
+    mapping(address => bool) isForeman;
 
     /**
         @notice Is to be called by a farm address to create a new foreman for that farm.
@@ -185,8 +183,8 @@ contract coffee is Ownable{
             if(!success){
                 revert PaymentFailed();
             }
-            emit workerPaid(msg.sender, _workers[i], _amounts[i], _date);
         }
+        emit workerPaid(msg.sender, _workers, _amounts, _date);
     }
 
     /**
@@ -198,10 +196,7 @@ contract coffee is Ownable{
         // We can handle the association between the worker and foreman in the subgraph.
         // This function accomplishes the goal of foremen indicating irrefutably that a worker
         // worked on a particular day as only a foreman can call this function.
-
-        for(uint i=0; i < _workers.length; i++){
-            emit workerCheckedIn(msg.sender, _workers[i], _date);
-        }
+        emit workerCheckedIn(msg.sender, _workers, _date);
     }
 
 }

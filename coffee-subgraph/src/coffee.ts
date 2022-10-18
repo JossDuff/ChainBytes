@@ -157,16 +157,6 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
     );
   }
 
-  // If the array of associated workers for a foreman doesn't
-  // already include this worker, add this worker to the array.
-  // if(foreman.hasWorkers != null){
-  //   if(!foreman.hasWorkers!.includes(worker.id)){
-  //     foreman.hasWorkers!.push(worker.id);
-  //   }
-  // } else {
-  //   foreman.hasWorkers = [worker.id];
-  // }
-
 
     // ╔═════════════════════════════╗
     // ║       UPDATE CHECKIN        ║
@@ -190,48 +180,10 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
   checkin.month = parsedDate[1];
   checkin.day = parsedDate[2];
 
-    // ╔═══════════════════════════╗
-    // ║       UPDATE FARM         ║
-    // ╚═══════════════════════════╝
-    // - load farm.  Farm should already exist
-    // - add checkin to farm's checkin array
-  
-  // let farm = Farm.load(foreman.hasFarm);
-  // if(!farm){
-  //   farm = new Farm(foreman.hasFarm);
-  //   farm.farmCheckIns = [];
-  //   farm.hasForemen = [];
-  //   farm.madePayments = [];
-  //   log.critical(
-  //     "Worker checkedIn by foreman but farm address doesn't exist in table",
-  //     []
-  //   );
-  // }
-
-  // finally, add the CheckIn to the worker, foreman, and farm's arrays
-  // if(worker.checkIns!=null){
-  //   worker.checkIns!.push(checkin.id);
-  // } else {
-  //   worker.checkIns = [checkin.id];
-  // }
-
-  // if(foreman.madeCheckIns!=null){
-  //   foreman.madeCheckIns!.push(checkin.id);
-  // } else {
-  //   foreman.madeCheckIns = [checkin.id];
-  // }
-
-  // if(farm.farmCheckIns!=null){
-  //   farm.farmCheckIns!.push(checkin.id);
-  // } else {
-  //   farm.farmCheckIns = [checkin.id];
-  // }
-
   // save all entities modified
   worker.save();
   checkin.save();
   foreman.save();
-  //farm.save();
 }
 
 export function handleworkerPaid(event: workerPaid): void {
