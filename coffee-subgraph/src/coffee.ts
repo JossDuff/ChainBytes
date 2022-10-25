@@ -87,61 +87,11 @@ export function handlenewForeman(event: newForeman): void {
 }
 
 export function handleworkerCheckedIn(event: workerCheckedIn): void {
+  // ╔═══════════════════════════╗
+  // ║       LOAD FOREMAN        ║
+  // ╚═══════════════════════════╝
+  // - load the foreman. foreman should already exist
 
-    // ╔═════════════════════════════╗
-    // ║       UPDATE WORKER         ║
-    // ╚═════════════════════════════╝
-    // - create new worker if they don't exist
-    //   - daysWorker = 1
-    //   - daysUnpaid = 1
-    //   - payments = []
-    //   - hasForeman = event.params.foreman
-      
-    // - if worker exists, load
-    //   - increment daysWorked and daysUnpaid 
-    //   - add foreman to hasForeman array (if they aren't already there)
-
-    // - add checkin to worker's checkIns array
-  
-
-  let worker = Worker.load(event.params.worker.toHex());
-
-  // if the worker doesn't exist, create one
-  if(!worker){
-    worker = new Worker(event.params.worker.toHex());
-    // being checked in means they worked one day
-    worker.daysWorked = 1;
-    // They haven't been paid yet since they get checked in before
-    // they get paid.
-    worker.daysUnpaid = 1;
-    // worker.payments = [];
-    worker.hasForeman = [event.params.foreman.toHex()];
-    // worker.checkIns = [];
-  }
-  else {
-    // if the worker exists, increment days worked 
-    // and days unpaid by 1.
-    worker.daysWorked += 1;
-    worker.daysUnpaid += 1;
-    if(worker.hasForeman!=null){
-      if(!worker.hasForeman!.includes(event.params.foreman.toHex())) {
-        let tempWorker = worker.hasForeman;
-        tempWorker!.push(event.params.foreman.toHex());
-        worker.hasForeman = tempWorker;
-      }
-    } else {
-      worker.hasForeman = [event.params.foreman.toHex()];
-    }
-  }
-
-
-    // ╔═════════════════════════════╗
-    // ║       UPDATE FOREMAN        ║
-    // ╚═════════════════════════════╝
-    // - load the foreman. foreman should already exist
-    // - add worker to the hasWorker array (if they don't already exist)
-    // - add the checkin to foreman's madeCheckin's array
-  
   let foreman = Foreman.load(event.params.foreman.toHex());
   // A checkin cannot exist without a foreman because coffee.sol
   // checkIn() function is only callable by a foreman, but
@@ -156,37 +106,90 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
       []
     );
   }
-
-
-    // ╔═════════════════════════════╗
-    // ║       UPDATE CHECKIN        ║
-    // ╚═════════════════════════════╝
-    // - create new checkin
-    // - set farmCheckedInAt to the foreman's farm
-    // - set foremanWhoChecked to the foreman
-    // - set workerChecked in to the worker
-    // - set year, month, day to the parsed date
   
-  // Create new checkin and sets the ID to transaction hash since hashes are unique
-  let checkin = new CheckIn(
-    event.transaction.hash.toHex() + event.logIndex.toString()
-  );
-  checkin.farmCheckedInAt = foreman.hasFarm;
-  checkin.foremanWhoChecked = foreman.id;
-  checkin.workerCheckedIn = worker.id;
-  // Parse date and assign
-  let parsedDate = parseDate(event.params.date);
-  checkin.year = parsedDate[0];
-  checkin.month = parsedDate[1];
-  checkin.day = parsedDate[2];
+  // update worker and checkin table for each worker in event
+  for (var i = 0; i< event.params.worker.length; i++) {
+    let thisWorker = event.params.worker[i];
+    // ╔═════════════════════════════╗
+    // ║       UPDATE WORKER         ║
+    // ╚═════════════════════════════╝
+    // - create new worker if they don't exist
+    //   - daysWorker = 1
+    //   - daysUnpaid = 1
+    //   - payments = []
+    //   - hasForeman = event.params.foreman
+      
+    // - if worker exists, load
+    //   - increment daysWorked and daysUnpaid 
+    //   - add foreman to hasForeman array (if they aren't already there)
 
-  // save all entities modified
-  worker.save();
-  checkin.save();
+    // - add checkin to worker's checkIns array
+    
+    let worker = Worker.load(thisWorker.toHex());
+
+    // if the worker doesn't exist, create one
+    if(!worker){
+      worker = new Worker(thisWorker.toHex());
+      // being checked in means they worked one day
+      worker.daysWorked = 1;
+      // They haven't been paid yet since they get checked in before
+      // they get paid.
+      worker.daysUnpaid = 1;
+      // worker.payments = [];
+      worker.hasForeman = [event.params.foreman.toHex()];
+      // worker.checkIns = [];
+    }
+    else {
+      // if the worker exists, increment days worked 
+      // and days unpaid by 1.
+      worker.daysWorked += 1;
+      worker.daysUnpaid += 1;
+      if(worker.hasForeman!=null){
+        if(!worker.hasForeman!.includes(event.params.foreman.toHex())) {
+          let tempWorker = worker.hasForeman;
+          tempWorker!.push(event.params.foreman.toHex());
+          worker.hasForeman = tempWorker;
+        }
+      } else {
+        worker.hasForeman = [event.params.foreman.toHex()];
+      }
+    }
+
+      // ╔═════════════════════════════╗
+      // ║       UPDATE CHECKIN        ║
+      // ╚═════════════════════════════╝
+      // - create new checkin
+      // - set farmCheckedInAt to the foreman's farm
+      // - set foremanWhoChecked to the foreman
+      // - set workerChecked in to the worker
+      // - set year, month, day to the parsed date
+
+    // Create new checkin and sets the ID to transaction hash since hashes are unique
+    let checkin = new CheckIn(
+      event.transaction.hash.toHex() + event.logIndex.toString()
+    );
+    checkin.farmCheckedInAt = foreman.hasFarm;
+    checkin.foremanWhoChecked = foreman.id;
+    checkin.workerCheckedIn = worker.id;
+    // Parse date and assign
+    let parsedDate = parseDate(event.params.date);
+    checkin.year = parsedDate[0];
+    checkin.month = parsedDate[1];
+    checkin.day = parsedDate[2];
+
+    // save all entities modified
+    worker.save();
+    checkin.save();
+  }
+
   foreman.save();
 }
 
 export function handleworkerPaid(event: workerPaid): void {
+  for (var i = 0; i< event.params.worker.length; i++) {
+    let thisWorker = event.params.worker[i];
+    let thisPayment = event.params.amount[i];
+
     // ╔═════════════════════════════╗
     // ║       UPDATE WORKER         ║
     // ╚═════════════════════════════╝
@@ -194,81 +197,49 @@ export function handleworkerPaid(event: workerPaid): void {
     // - set worker daysUnpaid to 0
     // - add payment to worker's payment array
   
-  let worker = Worker.load(event.params.worker.toHex()); 
-  // We are assuming that a worker will never be paid before being
-  // checked in, so the worker should already exist.
-  if(!worker){
-    worker = new Worker(event.params.worker.toHex());
-    worker.daysWorked = 1;
-    worker.daysUnpaid = 1;
-    // worker.payments = [];
-    worker.hasForeman = [];
-    // worker.checkIns = [];
-    log.critical("Worker was paid before being checked in", []);
+    let worker = Worker.load(thisWorker.toHex()); 
+    // We are assuming that a worker will never be paid before being
+    // checked in, so the worker should already exist.
+    if(!worker){
+      worker = new Worker(thisWorker.toHex());
+      worker.daysWorked = 1;
+      worker.daysUnpaid = 1;
+      // worker.payments = [];
+      worker.hasForeman = [];
+      // worker.checkIns = [];
+      log.critical("Worker was paid before being checked in", []);
+    }
+    // Worker is now paid for all their previous days unpaid
+    let oldDaysUnpaid = worker.daysUnpaid;
+    worker.daysUnpaid = 0;
+  
+      // ╔═════════════════════════════╗
+      // ║       UPDATE PAYMENT        ║
+      // ╚═════════════════════════════╝
+      // - create new payment entry
+      // - set year, month, day to parsed date
+      // - amount = event.params.amount
+      // - daysPaidFor = worker's daysUnpaid (before updating to 0)
+      // - farmWhoPaid = event.params.farm
+      // - workerPaid = event.params.worker
+    
+    let payment = new Payment(
+      event.transaction.hash.toHex() + event.logIndex.toString()
+    );
+    payment.amount = thisPayment;
+    payment.daysPaidFor = oldDaysUnpaid;
+    // Parse date and assign
+    let parsedDate = parseDate(event.params.date);
+    payment.year = parsedDate[0];
+    payment.month = parsedDate[1];
+    payment.day = parsedDate[2];
+    payment.farmWhoPaid = event.transaction.from.toHex();
+    payment.workerPaid = worker.id;
+    
+    // save entities modified
+    worker.save();
+    payment.save();
   }
-  // Worker is now paid for all their previous days unpaid
-  let oldDaysUnpaid = worker.daysUnpaid;
-  worker.daysUnpaid = 0;
-
-    //  ╔═══════════════════════════╗
-    //  ║       UPDATE FARM         ║
-    //  ╚═══════════════════════════╝
-    // - load farm.  Farm should already exist
-    // - add payment to farm's payment array
-  
-  // let farm = Farm.load(event.params.farm.toHex());
-  // if(!farm){
-  //   farm = new Farm(event.params.farm.toHex());
-  //   farm.farmCheckIns = [];
-  //   farm.hasForemen = [];
-  //   farm.madePayments = [];
-  //   log.critical(
-  //     "workerPaid event emitted but no farm with this address exists in table",
-  //     []
-  //   );
-  // }
-
-    // ╔═════════════════════════════╗
-    // ║       UPDATE PAYMENT        ║
-    // ╚═════════════════════════════╝
-    // - create new payment entry
-    // - set year, month, day to parsed date
-    // - amount = event.params.amount
-    // - daysPaidFor = worker's daysUnpaid (before updating to 0)
-    // - farmWhoPaid = event.params.farm
-    // - workerPaid = event.params.worker
-  
-  let payment = new Payment(
-    event.transaction.hash.toHex() + event.logIndex.toString()
-  );
-  payment.amount = event.params.amount;
-  payment.daysPaidFor = oldDaysUnpaid;
-  // Parse date and assign
-  let parsedDate = parseDate(event.params.date);
-  payment.year = parsedDate[0];
-  payment.month = parsedDate[1];
-  payment.day = parsedDate[2];
-  payment.farmWhoPaid = event.transaction.from.toHex();
-  payment.workerPaid = worker.id;
-
-
-  // finally, add the CheckIn to the worker and farm's arrays 
-  // if(worker.payments!=null){
-  //   worker.payments!.push(payment.id);
-  // } else {
-  //   worker.payments = [payment.id];
-  // }
-
-  // if(farm.madePayments!=null){
-  //   farm.madePayments!.push(payment.id);
-  // } else {
-  //   farm.madePayments = [payment.id];
-  // }
-
-  // save entities modified
-  //farm.save();
-  worker.save();
-  payment.save();
 }
 
 

@@ -80,7 +80,7 @@ contract coffee is Ownable{
         Used in onlyFarm modifier.
         Is set in createFarm(address _farmAddress). 
     */
-    mapping(address => bool) isFarm;
+    mapping(address => bool) public isFarm;
 
     /**
         @notice Only the owner (admin) can call this function to create a new farm.
@@ -103,7 +103,7 @@ contract coffee is Ownable{
         Used in onlyForeman modifier. 
         Set in createForeman(address _foremanAddress).
     */
-    mapping(address => bool) isForeman;
+    mapping(address => bool) public isForeman;
 
     /**
         @notice Is to be called by a farm address to create a new foreman for that farm.

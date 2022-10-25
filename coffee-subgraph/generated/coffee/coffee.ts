@@ -89,8 +89,8 @@ export class workerCheckedIn__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get worker(): Address {
-    return this._event.parameters[1].value.toAddress();
+  get worker(): Array<Address> {
+    return this._event.parameters[1].value.toAddressArray();
   }
 
   get date(): string {
@@ -115,12 +115,12 @@ export class workerPaid__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get worker(): Address {
-    return this._event.parameters[1].value.toAddress();
+  get worker(): Array<Address> {
+    return this._event.parameters[1].value.toAddressArray();
   }
 
-  get amount(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+  get amount(): Array<BigInt> {
+    return this._event.parameters[2].value.toBigIntArray();
   }
 
   get date(): string {

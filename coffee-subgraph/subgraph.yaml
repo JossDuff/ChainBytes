@@ -6,7 +6,7 @@ dataSources:
     name: coffee
     network: goerli
     source:
-      address: "0xF3b27f96d4faa4De57C87d6860e99185Aa435d46"
+      address: "0xD260302a241A2CFBc1493676b4fA3f365870De59"
       abi: coffee
     mapping:
       kind: ethereum/events
@@ -28,8 +28,8 @@ dataSources:
           handler: handlenewFarm
         - event: newForeman(address,address)
           handler: handlenewForeman
-        - event: workerCheckedIn(address,address,string)
+        - event: workerCheckedIn(address,address[],string)
           handler: handleworkerCheckedIn
-        - event: workerPaid(address,address,uint256,string)
+        - event: workerPaid(address,address[],uint256[],string)
           handler: handleworkerPaid
       file: ./src/coffee.ts
