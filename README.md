@@ -59,21 +59,21 @@ For associating workers to foremen, this can also be handled in our subgraph bec
 
 ## Events
 ```
-    event newFarm(address farmAddress);
-    event newForeman(address farmAddress, address foreman);
-    event workerCheckedIn(address foreman, address[] worker, string date);
-    event workerPaid(address farm, address[] worker, uint[] amount, string date);
+event newFarm(address farmAddress);
+event newForeman(address farmAddress, address foreman);
+event workerCheckedIn(address foreman, address[] worker, string date);
+event workerPaid(address farm, address[] worker, uint[] amount, string date);
 ```
 
 ## Custom Errors
 Custom Solidity errors instead of require statement strings saves gas on deploy.
 ```
-   error AddressNotFarm();
-   error AddressNotForeman();
-   error WorkersAmountsMismatch();
-   error WrongPaymentAmount();
-   error PaymentFailed();
-   error SendBackFailed();
+error AddressNotFarm();
+error AddressNotForeman();
+error WorkersAmountsMismatch();
+error WrongPaymentAmount();
+error PaymentFailed();
+error SendBackFailed();
 ```
 
 ## Mappings
