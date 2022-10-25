@@ -146,7 +146,7 @@ Run all commands in order in the `coffee-subgraph` folder
 ## Important Files
 `schema.graphql`
 * Where we define our tables based on below diagram
-![Schema diagram](https://github.com/JossDuff/ChainBytes/blob/master/schema.png)
+![Schema diagram](https://github.com/JossDuff/ChainBytes/blob/master/table-schema.png)
 
 `src/coffee.ts`
 * Event handlers
