@@ -175,11 +175,5 @@ describe("coffee contract", function () {
   });
 
   // farm tries to pay an invalid address (transactions paying all workers should revert)
-
-  //what are some other tests that would help us test this contract?
-  //a: test that the foreman can't create a farm
-  //b: test that the foreman can't pay workers
-  //c: test that the foreman can't check in workers
-  //d: test that the foreman can't create another foreman
   
 });
