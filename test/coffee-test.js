@@ -77,7 +77,7 @@ describe("coffee contract", function () {
           .checkIn([addr3.address], "August 24th, 2000")
       )
         .to.emit(hardhatCoffee, "workerCheckedIn")
-        .withArgs(addr2.address, addr3.address, "August 24th, 2000");
+        .withArgs(addr2.address, [addr3.address], "August 24th, 2000");
     });
   });
   //
@@ -133,9 +133,7 @@ describe("coffee contract", function () {
         })
       )
         .to.emit(hardhatCoffee, "workerPaid")
-        .withArgs(addr1.address, addr2.address, amounts[0], date)
-        .and.to.emit(hardhatCoffee, "workerPaid")
-        .withArgs(addr1.address, addr3.address, amounts[1], date);
+        .withArgs(addr1.address, [addr2.address, addr3.address], amounts, date)
     });
   });
 
@@ -177,4 +175,5 @@ describe("coffee contract", function () {
   });
 
   // farm tries to pay an invalid address (transactions paying all workers should revert)
+  
 });
