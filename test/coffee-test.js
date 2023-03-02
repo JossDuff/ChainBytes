@@ -175,5 +175,47 @@ describe("coffee contract", function () {
   });
 
   // farm tries to pay an invalid address (transactions paying all workers should revert)
+  describe("farm tries to pay an address that is not a worker", function () {
   
+    //test if a farm tries to pay itself
+    describe("farm tries to pay itself", function () {
+      it("Should revert with the proper error message", async function () {
+        //build args for payWorkers
+        let workers = [addr1.address, addr3.address];
+        let amounts = [2, 4];
+        let date = "02/28/2023";
+        //set addr1 as a farm
+        await hardhatCoffee.createFarm(addr1.address);
+
+        await expect(
+          hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+            value: 6,
+          })
+        ).to.be.reverted;
+      });
+    });
+
+    //test if a farm tries to pay a foreman
+    describe("farm tries to pay a foreman", function () {
+      it("Should revert with the proper error message", async function () {
+        //build args for payWorkers
+        let workers = [addr2.address, addr3.address];
+        let amounts = [2, 4];
+        let date = "02/28/2023";
+        //set addr1 as a farm
+        await hardhatCoffee.createFarm(addr1.address);
+        //set addr2 as a foreman
+        await hardhatCoffee.connect(addr1).createForeman(addr2.address);
+
+        await expect(
+          hardhatCoffee.connect(addr1).payWorkers(workers, amounts, date, {
+            value: 6,
+          })
+        ).to.be.reverted;
+      });
+    });
+  });
+
+
+
 });
