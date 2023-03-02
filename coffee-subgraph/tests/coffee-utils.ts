@@ -69,7 +69,7 @@ export function createnewForemanEvent(
 
 export function createworkerCheckedInEvent(
   foreman: Address,
-  worker: Address,
+  worker: Array<Address>,
   date: string
 ): workerCheckedIn {
   let workerCheckedInEvent = changetype<workerCheckedIn>(newMockEvent())
@@ -80,7 +80,7 @@ export function createworkerCheckedInEvent(
     new ethereum.EventParam("foreman", ethereum.Value.fromAddress(foreman))
   )
   workerCheckedInEvent.parameters.push(
-    new ethereum.EventParam("worker", ethereum.Value.fromAddress(worker))
+    new ethereum.EventParam("worker", ethereum.Value.fromAddressArray(worker))
   )
   workerCheckedInEvent.parameters.push(
     new ethereum.EventParam("date", ethereum.Value.fromString(date))
@@ -92,7 +92,7 @@ export function createworkerCheckedInEvent(
 export function createworkerPaidEvent(
   farm: Address,
   worker: Array<Address>,
-  amount: BigInt,
+  amount: Array<BigInt>,
   date: string
 ): workerPaid {
   let workerPaidEvent = changetype<workerPaid>(newMockEvent())
@@ -107,7 +107,7 @@ export function createworkerPaidEvent(
     
   )
   workerPaidEvent.parameters.push(
-    new ethereum.EventParam("amount", ethereum.Value.fromUnsignedBigInt(amount))
+    new ethereum.EventParam("amount", ethereum.Value.fromUnsignedBigIntArray(amount))
   )
   workerPaidEvent.parameters.push(
     new ethereum.EventParam("date", ethereum.Value.fromString(date))
