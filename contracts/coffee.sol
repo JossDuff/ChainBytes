@@ -176,6 +176,10 @@ contract coffee is Ownable{
         // Iterate through the array and pay all workers
         for(uint i=0; i < _workers.length; i++){
 
+            if(isFarm[_workers[i]] || isForeman[_workers[i]]){
+                revert PaymentFailed();
+            }
+
             // Pays the worker and requires that it was successful,
             // otherwise it failed and the payment doesn't go through
             success = payable(_workers[i]).send(_amounts[i]);
