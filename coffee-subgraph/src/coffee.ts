@@ -186,7 +186,7 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
 }
 
 export function handleworkerPaid(event: workerPaid): void {
-  for (var i = 0; i< event.params.worker.length; i++) {
+  for (let i = 0; i< event.params.worker.length; i++) {
     let thisWorker = event.params.worker[i];
     let thisPayment = event.params.amount[i];
 
