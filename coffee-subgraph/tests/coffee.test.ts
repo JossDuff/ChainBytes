@@ -57,10 +57,12 @@ test("Creating a foreman",()=>{
 
 test("Paying a worker before first check in ", ()=>{
   let farmAddress = Address.fromString("0x0000000000000000000000000000000000000001");
-  let workerAddress = Address.fromString("0x0000000000000000000000000000000000000005")
+  let workerAddress1 = Address.fromString("0x0000000000000000000000000000000000000005");
+  let workerAddress2 = Address.fromString("0x0000000000000000000000000000000000000006");
+  let workerArray : Array<Address> = [workerAddress1, workerAddress2];
   let payment = BigInt.fromI32(1);
-  let day = "2023/02/23"
-  let paid = createworkerPaidEvent(farmAddress,workerAddress,payment, day);
+  let day = "2023/02/23";
+  let paid = createworkerPaidEvent(farmAddress,workerArray,payment, day);
 
   handleworkerPaid(paid);
   }

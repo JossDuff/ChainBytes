@@ -91,7 +91,7 @@ export function createworkerCheckedInEvent(
 
 export function createworkerPaidEvent(
   farm: Address,
-  worker: Address,
+  worker: Array<Address>,
   amount: BigInt,
   date: string
 ): workerPaid {
@@ -103,7 +103,8 @@ export function createworkerPaidEvent(
     new ethereum.EventParam("farm", ethereum.Value.fromAddress(farm))
   )
   workerPaidEvent.parameters.push(
-    new ethereum.EventParam("worker", ethereum.Value.fromAddress(worker))
+    new ethereum.EventParam("worker", ethereum.Value.fromAddressArray(worker))
+    
   )
   workerPaidEvent.parameters.push(
     new ethereum.EventParam("amount", ethereum.Value.fromUnsignedBigInt(amount))
