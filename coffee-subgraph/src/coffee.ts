@@ -186,7 +186,8 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
 }
 
 export function handleworkerPaid(event: workerPaid): void {
-  for (var i = 0; i< event.params.worker.length; i++) {
+  
+  for (let i = 0; i< event.params.worker.length; i++) {
     let thisWorker = event.params.worker[i];
     let thisPayment = event.params.amount[i];
 
@@ -201,13 +202,14 @@ export function handleworkerPaid(event: workerPaid): void {
     // We are assuming that a worker will never be paid before being
     // checked in, so the worker should already exist.
     if(!worker){
-      worker = new Worker(thisWorker.toHex());
-      worker.daysWorked = 1;
-      worker.daysUnpaid = 1;
-      // worker.payments = [];
-      worker.hasForeman = [];
-      // worker.checkIns = [];
-      log.critical("Worker was paid before being checked in", []);
+      continue;
+      // worker = new Worker(thisWorker.toHex());
+      // worker.daysWorked = 1;
+      // worker.daysUnpaid = 1;
+      // // worker.payments = [];
+      // worker.hasForeman = [];
+      // // worker.checkIns = [];
+      // log.critical("Worker was paid before being checked in", []);
     }
     // Worker is now paid for all their previous days unpaid
     let oldDaysUnpaid = worker.daysUnpaid;
