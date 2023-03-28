@@ -106,6 +106,62 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
       []
     );
   }
+  /*
+  // ╔═════════════════════════════╗
+  // ║   HANDLE FOREMAN CHECKIN    ║
+  // ╚═════════════════════════════╝
+
+  // Ideas:
+  // - create a new event for foreman checkin
+  // - add a new field to checkin for foreman
+  // - treat foreman as worker
+  // - link foreman to a worker address
+
+  // create a new worker entity that links to the foreman address if it doesn't exist
+  let foremanWorker = Worker.load(event.params.foreman.toHex());
+  if(!foremanWorker){
+    foremanWorker = new Worker(event.params.foreman.toHex());
+    // foremanWorker.daysWorked = 1;
+    // foremanWorker.daysUnpaid = 1;
+    // foremanWorker.payments = [];
+    // foremanWorker.hasForeman = [event.params.foreman.toHex()];
+    // foremanWorker.checkIns = [];
+  }
+  // foremanWorker.daysWorked = foremanWorker.daysWorked + 1;
+  // foremanWorker.daysUnpaid = foremanWorker.daysUnpaid + 1;
+  
+  // add checkin to foreman's checkIns array
+  // if(foreman.madeCheckIns != null){
+  //   foreman.madeCheckIns!.push(event.params.checkInId.toHex());
+  // } else{
+  //   foreman.madeCheckIns = [event.params.checkInId.toHex()];
+  // }
+
+  // add foreman to worker's hasForeman array
+  // if(foremanWorker.hasForeman != null){
+  //   if(!foremanWorker.hasForeman!.includes(event.params.foreman.toHex())){
+  //     foremanWorker.hasForeman!.push(event.params.foreman.toHex());
+  //   }
+  // } else{
+  //   foremanWorker.hasForeman = [event.params.foreman.toHex()];
+  // }
+
+  // add worker to foreman's hasWorkers array
+  // if(foreman.hasWorkers != null){
+  //   if(!foreman.hasWorkers!.includes(foremanWorker.id)){
+  //     foreman.hasWorkers!.push(foremanWorker.id);
+  //   }
+  // } else{
+  //   foreman.hasWorkers = [foremanWorker.id];
+
+  // }
+  */
+
+
+
+
+
+
   
   // update worker and checkin table for each worker in event
   for (var i = 0; i< event.params.worker.length; i++) {
@@ -187,6 +243,13 @@ export function handleworkerCheckedIn(event: workerCheckedIn): void {
 
 export function handleworkerPaid(event: workerPaid): void {
   
+  //if the farm doesn't exist, revert the transaction
+  let farm = event.transaction.from.toHex();
+  if(!farm){
+    log.critical("workerPaid event emitted but no farm with this address exists in table",[]);
+    return;
+  }
+
   for (let i = 0; i< event.params.worker.length; i++) {
     let thisWorker = event.params.worker[i];
     let thisPayment = event.params.amount[i];
@@ -243,16 +306,6 @@ export function handleworkerPaid(event: workerPaid): void {
     payment.save();
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

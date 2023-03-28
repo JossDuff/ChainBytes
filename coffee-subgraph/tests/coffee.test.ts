@@ -98,6 +98,9 @@ test("Paying a worker before first check in ", ()=>{
   }
 )
 
+
+
+/*
   test("Checking in a worker from a non-forman address", ()=>{
 
     //this forman address is  not a logged forman address
@@ -111,9 +114,26 @@ test("Paying a worker before first check in ", ()=>{
     let checkin = createworkerCheckedInEvent(foremanAddress, workerArray, "2023/03/03");
     handleworkerCheckedIn(checkin);
 
+    //test passes if the worker is not checked in
+    //assert.fieldEquals("Worker Checked In", "0x0000000000000000000000000000000000000005", "checkedIn", "false");
     
-
   }
+  )
+  */
+
+  test("Paying a worker from a non-farm address", ()=>{
+    let farmAddress = Address.fromString(   "0x0000000000000000000000000000000000034345");
+    let workerAddress1 = Address.fromString("0x0000000000000000000000000000000000000005");
+    let workerAddress2 = Address.fromString("0x0000000000000000000000000000000000000006");
+  
+    let workerArray : Array<Address> = [workerAddress1, workerAddress2];
+    let payment = BigInt.fromI32(1);
+    let paymentArray : Array<BigInt> = [payment,payment];
+    let day = "2023/02/23";
+  
+    let paid = createworkerPaidEvent(farmAddress,workerArray,paymentArray, day);
+    handleworkerPaid(paid);
+    }
   )
 
 

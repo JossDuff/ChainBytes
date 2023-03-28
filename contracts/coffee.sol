@@ -181,6 +181,12 @@ contract coffee is Ownable{
             if(isFarm[_workers[i]] || isForeman[_workers[i]]){
                 revert PaymentFailed();
             }
+            /* FUTURE BACKLOG
+             * 
+             * - We remove the isForeman check above and instead handle logic in the subgraph.
+             * - Could emit another event to handle the case where a foreman is in the array.
+             * - We could also handle the foreman logic the same way we handle the worker logic.
+             */
 
             // Pays the worker and requires that it was successful,
             // otherwise it failed and the payment doesn't go through
